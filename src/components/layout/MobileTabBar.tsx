@@ -1,14 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { Compass, Hammer, Wallet, Users, User } from "lucide-react";
+import { Compass, Hammer, Wallet, Users, User, type LucideIcon } from "lucide-react";
 
-type Tab = { to: string; label: string; icon: typeof Compass; exact?: boolean };
-const TABS: Tab[] = [
-  { to: "/", label: "Discover", icon: Compass, exact: true },
-  { to: "/build", label: "Build", icon: Hammer },
-  { to: "/cashflow", label: "Cash Flow", icon: Wallet },
-  { to: "/community", label: "Community", icon: Users },
-  { to: "/profile", label: "Profile", icon: User },
-];
+const cls =
+  "group flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground transition-colors data-[status=active]:text-primary";
+const iconCls = "h-[18px] w-[18px] transition-transform group-data-[status=active]:scale-110";
+
+function TabIcon({ Icon }: { Icon: LucideIcon }) {
+  return <Icon className={iconCls} strokeWidth={1.75} />;
+}
 
 export function MobileTabBar() {
   return (
@@ -17,17 +16,26 @@ export function MobileTabBar() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Primary"
     >
-      {TABS.map(({ to, label, icon: Icon, exact }) => (
-        <Link
-          key={to}
-          to={to}
-          activeOptions={{ exact: !!exact }}
-          className="group flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground transition-colors data-[status=active]:text-primary"
-        >
-          <Icon className="h-[18px] w-[18px] transition-transform group-data-[status=active]:scale-110" strokeWidth={1.75} />
-          <span>{label}</span>
-        </Link>
-      ))}
+      <Link to="/" activeOptions={{ exact: true }} className={cls}>
+        <TabIcon Icon={Compass} />
+        <span>Discover</span>
+      </Link>
+      <Link to="/build" className={cls}>
+        <TabIcon Icon={Hammer} />
+        <span>Build</span>
+      </Link>
+      <Link to="/cashflow" className={cls}>
+        <TabIcon Icon={Wallet} />
+        <span>Cash Flow</span>
+      </Link>
+      <Link to="/community" className={cls}>
+        <TabIcon Icon={Users} />
+        <span>Community</span>
+      </Link>
+      <Link to="/profile" className={cls}>
+        <TabIcon Icon={User} />
+        <span>Profile</span>
+      </Link>
     </nav>
   );
 }

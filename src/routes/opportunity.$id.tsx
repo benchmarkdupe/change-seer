@@ -9,9 +9,10 @@ import { MetricExplainer } from "@/components/opportunity/MetricExplainer";
 import { Disclosure } from "@/components/opportunity/Disclosure";
 import { ScoreTrace } from "@/components/opportunity/ScoreTrace";
 import { AppShell } from "@/components/layout/AppShell";
+import type { Opportunity } from "@/domain/types/opportunity";
 
 export const Route = createFileRoute("/opportunity/$id")({
-  loader: ({ params }) => {
+  loader: ({ params }): { opp: Opportunity } => {
     const opp = getSampleOpportunityById(params.id);
     if (!opp) throw notFound();
     return { opp };
