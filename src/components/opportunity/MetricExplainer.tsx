@@ -15,7 +15,7 @@ export function MetricExplainer({
   explainer,
   tone = "default",
 }: {
-  label: string;
+  label: ReactNode;
   value: ReactNode;
   explainer: string;
   tone?: "default" | "high" | "mod" | "low";

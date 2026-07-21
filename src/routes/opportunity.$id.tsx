@@ -122,7 +122,7 @@ function OpportunityDetail() {
               <span className="inline-flex items-center gap-1">
                 <MomentumBadge momentum={opp.score.momentum} />
                 Momentum
-              </span> as unknown as string
+              </span>
             }
             value={opp.score.momentum}
             explainer="Momentum is the rate-of-change component: is this opportunity accelerating, cooling, or holding steady over the recent window? It comes from momentum-type signals reported by the scouts."
