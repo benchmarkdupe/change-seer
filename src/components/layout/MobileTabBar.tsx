@@ -1,13 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { Compass, Hammer, Wallet, Users, User } from "lucide-react";
 
-const TABS = [
+type Tab = { to: string; label: string; icon: typeof Compass; exact?: boolean };
+const TABS: Tab[] = [
   { to: "/", label: "Discover", icon: Compass, exact: true },
   { to: "/build", label: "Build", icon: Hammer },
   { to: "/cashflow", label: "Cash Flow", icon: Wallet },
   { to: "/community", label: "Community", icon: Users },
   { to: "/profile", label: "Profile", icon: User },
-] as const;
+];
 
 export function MobileTabBar() {
   return (
