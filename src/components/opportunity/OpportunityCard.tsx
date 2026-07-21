@@ -5,6 +5,7 @@ import type { DataState } from "@/domain/dataState";
 import { CATEGORY_META, tierClass, relativeDate } from "./tokens";
 import { DataStateBadge } from "./DataStateBadge";
 import { Sparkline } from "./Sparkline";
+import { SaveButton } from "./SaveButton";
 
 function MomentumIcon({ momentum }: { momentum: number }) {
   const cls = "h-3 w-3";
@@ -13,7 +14,7 @@ function MomentumIcon({ momentum }: { momentum: number }) {
   return <Minus className={`${cls} text-muted-foreground`} />;
 }
 
-export function OpportunityCard({ opp, dataState }: { opp: Opportunity; dataState: DataState }) {
+export function OpportunityCard({ opp, dataState, isSaved = false }: { opp: Opportunity; dataState: DataState; isSaved?: boolean }) {
   const tier = tierClass(opp.score.rating);
   const cat = CATEGORY_META[opp.category];
   const Icon = cat.icon;
@@ -37,13 +38,12 @@ export function OpportunityCard({ opp, dataState }: { opp: Opportunity; dataStat
             {opp.title}
           </h3>
         </div>
-        <div className="shrink-0 text-right">
-          <div className={`font-mono text-2xl font-semibold leading-none ${tier.text}`}>
-            {opp.score.signalScore}
+        <div className="flex shrink-0 items-start gap-2">
+          <div className="text-right">
+            <div className={`font-mono text-2xl font-semibold leading-none ${tier.text}`}>{opp.score.signalScore}</div>
+            <div className={`mt-1 text-[9px] font-medium uppercase tracking-wider ${tier.text}`}>{tier.label}</div>
           </div>
-          <div className={`mt-1 text-[9px] font-medium uppercase tracking-wider ${tier.text}`}>
-            {tier.label}
-          </div>
+          <SaveButton opportunityId={opp.id} initiallySaved={isSaved} />
         </div>
       </div>
 

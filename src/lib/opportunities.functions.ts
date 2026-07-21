@@ -48,7 +48,7 @@ export const getLiveOpportunities = createServerFn({ method: "GET" }).handler(
               evidence: s.evidence,
               source_url: s.source_url,
               source_confidence: s.source_confidence,
-              raw_payload: s.raw_payload as unknown as Record<string, unknown>,
+              raw_payload: s.raw_payload as unknown as never,
             })),
           );
         }
