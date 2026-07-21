@@ -14,16 +14,358 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      badges: {
+        Row: {
+          color: string
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          max_supply: number | null
+          name: string
+          rarity: string
+          retired_at: string | null
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description: string
+          icon?: string
+          id: string
+          max_supply?: number | null
+          name: string
+          rarity?: string
+          retired_at?: string | null
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          max_supply?: number | null
+          name?: string
+          rarity?: string
+          retired_at?: string | null
+        }
+        Relationships: []
+      }
+      opportunity_signals: {
+        Row: {
+          detected_at: string
+          evidence: string
+          id: string
+          ingested_at: string
+          opportunity_key: string
+          raw_payload: Json | null
+          scout_id: string
+          signal_type: string
+          source_confidence: number
+          source_url: string | null
+          value: number
+        }
+        Insert: {
+          detected_at?: string
+          evidence: string
+          id?: string
+          ingested_at?: string
+          opportunity_key: string
+          raw_payload?: Json | null
+          scout_id: string
+          signal_type: string
+          source_confidence?: number
+          source_url?: string | null
+          value: number
+        }
+        Update: {
+          detected_at?: string
+          evidence?: string
+          id?: string
+          ingested_at?: string
+          opportunity_key?: string
+          raw_payload?: Json | null
+          scout_id?: string
+          signal_type?: string
+          source_confidence?: number
+          source_url?: string | null
+          value?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          interests: string[] | null
+          region: string | null
+          updated_at: string
+          username: string | null
+          visibility: Database["public"]["Enums"]["profile_visibility"]
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          interests?: string[] | null
+          region?: string | null
+          updated_at?: string
+          username?: string | null
+          visibility?: Database["public"]["Enums"]["profile_visibility"]
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          interests?: string[] | null
+          region?: string | null
+          updated_at?: string
+          username?: string | null
+          visibility?: Database["public"]["Enums"]["profile_visibility"]
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          opportunity_id: string | null
+          started_at: string
+          status: Database["public"]["Enums"]["project_status"]
+          updated_at: string
+          user_id: string
+          visibility: Database["public"]["Enums"]["profile_visibility"]
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          opportunity_id?: string | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+          user_id: string
+          visibility?: Database["public"]["Enums"]["profile_visibility"]
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          opportunity_id?: string | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+          user_id?: string
+          visibility?: Database["public"]["Enums"]["profile_visibility"]
+        }
+        Relationships: []
+      }
+      saved_opportunities: {
+        Row: {
+          id: string
+          note: string | null
+          opportunity_id: string
+          saved_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          note?: string | null
+          opportunity_id: string
+          saved_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          note?: string | null
+          opportunity_id?: string
+          saved_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      source_health: {
+        Row: {
+          last_error: string | null
+          last_failure_at: string | null
+          last_success_at: string | null
+          records_last_run: number
+          refresh_interval_minutes: number
+          scout_id: string
+          scout_name: string
+          status: Database["public"]["Enums"]["source_status"]
+          total_runs: number
+          updated_at: string
+        }
+        Insert: {
+          last_error?: string | null
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          records_last_run?: number
+          refresh_interval_minutes?: number
+          scout_id: string
+          scout_name: string
+          status?: Database["public"]["Enums"]["source_status"]
+          total_runs?: number
+          updated_at?: string
+        }
+        Update: {
+          last_error?: string | null
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          records_last_run?: number
+          refresh_interval_minutes?: number
+          scout_id?: string
+          scout_name?: string
+          status?: Database["public"]["Enums"]["source_status"]
+          total_runs?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount_cents: number
+          category: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          id: string
+          kind: Database["public"]["Enums"]["transaction_kind"]
+          occurred_at: string
+          project_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          category?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["transaction_kind"]
+          occurred_at?: string
+          project_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          category?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["transaction_kind"]
+          occurred_at?: string
+          project_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_badges: {
+        Row: {
+          badge_id: string
+          displayed: boolean
+          earned_at: string
+          id: string
+          issue_number: number | null
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          displayed?: boolean
+          earned_at?: string
+          id?: string
+          issue_number?: number | null
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          displayed?: boolean
+          earned_at?: string
+          id?: string
+          issue_number?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          granted_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          granted_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          granted_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "user"
+        | "early_access"
+        | "builder"
+        | "moderator"
+        | "admin"
+        | "developer"
+      profile_visibility: "public" | "private"
+      project_status:
+        | "exploring"
+        | "building"
+        | "launched"
+        | "paused"
+        | "shelved"
+      source_status: "healthy" | "degraded" | "down" | "never_run"
+      transaction_kind: "income" | "expense"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +492,25 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "user",
+        "early_access",
+        "builder",
+        "moderator",
+        "admin",
+        "developer",
+      ],
+      profile_visibility: ["public", "private"],
+      project_status: [
+        "exploring",
+        "building",
+        "launched",
+        "paused",
+        "shelved",
+      ],
+      source_status: ["healthy", "degraded", "down", "never_run"],
+      transaction_kind: ["income", "expense"],
+    },
   },
 } as const
