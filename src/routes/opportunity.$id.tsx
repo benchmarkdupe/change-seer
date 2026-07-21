@@ -59,7 +59,7 @@ function MomentumBadge({ momentum }: { momentum: number }) {
 }
 
 function OpportunityDetail() {
-  const { opp } = Route.useLoaderData();
+  const { opp } = Route.useLoaderData() as { opp: Opportunity };
   const tier = tierClass(opp.score.rating);
   const cat = CATEGORY_META[opp.category];
   const Icon = cat.icon;
