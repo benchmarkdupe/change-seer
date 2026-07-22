@@ -18,7 +18,10 @@ export function ScoreTrace({ score }: { score: ScoreBreakdown }) {
           const positive = c.contribution >= 0;
           const pct = Math.max(4, (Math.abs(c.contribution) / max) * 100);
           return (
-            <li key={`${c.signalType}-${i}`} className="rounded-xl border border-border-soft bg-surface-sunken/60 p-3">
+            <li
+              key={`${c.signalType}-${i}`}
+              className="rounded-xl border border-border-soft bg-surface-sunken/60 p-3"
+            >
               <div className="flex items-baseline justify-between gap-3">
                 <p className="text-[13px] font-medium text-foreground">
                   {c.reason}
@@ -28,7 +31,9 @@ export function ScoreTrace({ score }: { score: ScoreBreakdown }) {
                     </span>
                   )}
                 </p>
-                <span className={`font-mono text-sm font-semibold ${positive ? "text-tier-high" : "text-tier-low"}`}>
+                <span
+                  className={`font-mono text-sm font-semibold ${positive ? "text-tier-high" : "text-tier-low"}`}
+                >
                   {positive ? "+" : ""}
                   {c.contribution.toFixed(1)}
                 </span>

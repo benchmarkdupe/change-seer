@@ -6,9 +6,16 @@ export const Route = createFileRoute("/community")({
   head: () => ({
     meta: [
       { title: "Community — OpportunityOS" },
-      { name: "description", content: "Discussions tied to specific opportunities — challenges, corroborations, and real outcomes." },
+      {
+        name: "description",
+        content:
+          "Discussions tied to specific opportunities — challenges, corroborations, and real outcomes.",
+      },
       { property: "og:title", content: "Community — OpportunityOS" },
-      { property: "og:description", content: "Real conversations tied to specific opportunities, not generic feeds." },
+      {
+        property: "og:description",
+        content: "Real conversations tied to specific opportunities, not generic feeds.",
+      },
     ],
   }),
   component: () => (

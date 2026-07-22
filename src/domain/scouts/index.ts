@@ -48,9 +48,7 @@ export async function runAllScouts(): Promise<RawSignal[]> {
   return signals;
 }
 
-export function groupSignalsByOpportunity(
-  signals: RawSignal[]
-): Record<string, RawSignal[]> {
+export function groupSignalsByOpportunity(signals: RawSignal[]): Record<string, RawSignal[]> {
   return signals.reduce<Record<string, RawSignal[]>>((acc, s) => {
     (acc[s.opportunityKey] ??= []).push(s);
     return acc;

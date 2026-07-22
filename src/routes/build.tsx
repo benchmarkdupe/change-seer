@@ -6,9 +6,16 @@ export const Route = createFileRoute("/build")({
   head: () => ({
     meta: [
       { title: "Build — OpportunityOS" },
-      { name: "description", content: "Turn opportunities into projects you're actually working on, and track what happens." },
+      {
+        name: "description",
+        content:
+          "Turn opportunities into projects you're actually working on, and track what happens.",
+      },
       { property: "og:title", content: "Build — OpportunityOS" },
-      { property: "og:description", content: "Track the real projects you build from opportunities you discover." },
+      {
+        property: "og:description",
+        content: "Track the real projects you build from opportunities you discover.",
+      },
     ],
   }),
   component: () => (
