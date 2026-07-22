@@ -25,19 +25,25 @@ function SavedPage() {
   return (
     <div className="min-h-screen bg-background pb-24">
       <header className="sticky top-0 z-20 border-b border-border bg-background/85 px-4 py-3 backdrop-blur">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="h-3.5 w-3.5" /> Back
         </Link>
       </header>
       <div className="px-4 pt-5">
         <h1 className="font-display text-2xl font-semibold tracking-tight">Saved</h1>
         <p className="mt-1 text-[13px] text-muted-foreground">
-          Opportunities you flagged. When one crosses into High Signal, you'll earn an Early Signal badge.
+          Opportunities you flagged. When one crosses into High Signal, you'll earn an Early Signal
+          badge.
         </p>
         {opps.length === 0 ? (
           <div className="mt-10 rounded-2xl border border-dashed border-border p-8 text-center">
             <Bookmark className="mx-auto h-6 w-6 text-muted-foreground" />
-            <p className="mt-3 text-[13px] text-muted-foreground">Nothing saved yet. Tap the bookmark on any card.</p>
+            <p className="mt-3 text-[13px] text-muted-foreground">
+              Nothing saved yet. Tap the bookmark on any card.
+            </p>
           </div>
         ) : (
           <div className="mt-5 space-y-3">

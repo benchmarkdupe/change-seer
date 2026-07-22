@@ -1,12 +1,6 @@
 import { SignalType } from "./signal";
 
-export type Category =
-  | "business"
-  | "product"
-  | "job"
-  | "investment"
-  | "trend"
-  | "income";
+export type Category = "business" | "product" | "job" | "investment" | "trend" | "income";
 
 export type VerificationStatus = "verified" | "pending" | "unverified";
 export type TrendDirection = "up" | "down" | "flat";
@@ -17,24 +11,24 @@ export type Difficulty = "low" | "moderate" | "high" | "very_high";
  * asks "why is this a 91", this array IS the answer. */
 export interface ScoreContribution {
   signalType: SignalType;
-  rawValue: number;          // 0-100 as reported
-  weight: number;             // weight applied for this opportunity's category profile
-  contribution: number;       // signed points this signal added/subtracted from the final score
+  rawValue: number; // 0-100 as reported
+  weight: number; // weight applied for this opportunity's category profile
+  contribution: number; // signed points this signal added/subtracted from the final score
   inverted: boolean;
-  reason: string;             // human-readable, e.g. "Search demand increasing"
+  reason: string; // human-readable, e.g. "Search demand increasing"
 }
 
 export interface ScoreBreakdown {
-  signalScore: number;        // 0-100 composite
-  confidence: number;         // 0-100, how corroborated the score is
-  momentum: number;           // 0-100, rate-of-change component
+  signalScore: number; // 0-100 composite
+  confidence: number; // 0-100, how corroborated the score is
+  momentum: number; // 0-100, rate-of-change component
   rating: "high_signal" | "moderate" | "low_signal";
   contributions: ScoreContribution[];
   /** Ordered, top-line reasons for display in the card's "why" list —
    * derived from `contributions`, never authored independently. This
    * guarantees the summary can never disagree with the math. */
   topReasons: string[];
-  scoringVersion: string;     // weight-profile version used, for auditability
+  scoringVersion: string; // weight-profile version used, for auditability
   computedAt: string;
 }
 
@@ -53,20 +47,20 @@ export interface Opportunity {
   id: string;
   title: string;
   category: Category;
-  region: string;                 // geographic scope
-  detectedAt: string;             // ISO date first observed
+  region: string; // geographic scope
+  detectedAt: string; // ISO date first observed
   verification: VerificationStatus;
   trend: TrendDirection;
-  sparkline: number[];            // recent score history for the trend graph
+  sparkline: number[]; // recent score history for the trend graph
 
   estimatedStartupCost: { min: number; max: number };
-  estimatedTimeCommitment: string;   // e.g. "10-15 hrs/wk"
+  estimatedTimeCommitment: string; // e.g. "10-15 hrs/wk"
   estimatedDifficulty: Difficulty;
   estimatedMonthlyPotential: { min: number; max: number };
 
-  summary: string;                // one-paragraph AI summary
+  summary: string; // one-paragraph AI summary
   score: ScoreBreakdown;
   aiDetail: AIDetail;
 
-  sourceScoutIds: string[];       // which scouts contributed evidence
+  sourceScoutIds: string[]; // which scouts contributed evidence
 }

@@ -12,10 +12,16 @@ const listSourceHealth = createServerFn({ method: "GET" }).handler(async () => {
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
-    meta: [{ title: "Admin — Source Health · OpportunityOS" }, { name: "robots", content: "noindex" }],
+    meta: [
+      { title: "Admin — Source Health · OpportunityOS" },
+      { name: "robots", content: "noindex" },
+    ],
   }),
   loader: ({ context }) =>
-    context.queryClient.ensureQueryData({ queryKey: ["source-health"], queryFn: () => listSourceHealth() }),
+    context.queryClient.ensureQueryData({
+      queryKey: ["source-health"],
+      queryFn: () => listSourceHealth(),
+    }),
   component: AdminPage,
 });
 
@@ -26,7 +32,10 @@ function AdminPage() {
   return (
     <div className="min-h-screen bg-background pb-24">
       <header className="sticky top-0 z-20 border-b border-border bg-background/85 px-4 py-3 backdrop-blur">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="h-3.5 w-3.5" /> Back
         </Link>
       </header>
@@ -36,17 +45,20 @@ function AdminPage() {
           <h1 className="font-display text-2xl font-semibold tracking-tight">Source health</h1>
         </div>
         <p className="mt-1 text-[13px] text-muted-foreground">
-          Every scout, its last successful pull, freshness window, and error state. Public read-only.
+          Every scout, its last successful pull, freshness window, and error state. Public
+          read-only.
         </p>
 
         <div className="mt-5 space-y-2">
           {data.map((s) => {
             const Icon =
-              s.status === "healthy" ? CheckCircle2 :
-              s.status === "down" ? AlertCircle : Clock;
+              s.status === "healthy" ? CheckCircle2 : s.status === "down" ? AlertCircle : Clock;
             const tone =
-              s.status === "healthy" ? "text-state-verified" :
-              s.status === "down" ? "text-tier-low" : "text-muted-foreground";
+              s.status === "healthy"
+                ? "text-state-verified"
+                : s.status === "down"
+                  ? "text-tier-low"
+                  : "text-muted-foreground";
             return (
               <div key={s.scout_id} className="rounded-2xl border border-border bg-surface p-3">
                 <div className="flex items-start justify-between gap-3">
@@ -55,11 +67,17 @@ function AdminPage() {
                       <Icon className={`h-4 w-4 ${tone}`} />
                       <span className="font-display text-[14px] font-semibold">{s.scout_name}</span>
                     </div>
-                    <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">{s.scout_id}</div>
-                    {s.last_error && <p className="mt-1 text-[11px] text-tier-low">{s.last_error}</p>}
+                    <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">
+                      {s.scout_id}
+                    </div>
+                    {s.last_error && (
+                      <p className="mt-1 text-[11px] text-tier-low">{s.last_error}</p>
+                    )}
                   </div>
                   <div className="text-right">
-                    <div className={`text-[10px] uppercase tracking-wider ${tone}`}>{s.status.replace("_", " ")}</div>
+                    <div className={`text-[10px] uppercase tracking-wider ${tone}`}>
+                      {s.status.replace("_", " ")}
+                    </div>
                     <div className="mt-0.5 font-mono text-[10px] text-muted-foreground">
                       refresh every {s.refresh_interval_minutes}m
                     </div>
@@ -68,7 +86,9 @@ function AdminPage() {
                 <div className="mt-2 grid grid-cols-3 gap-2 border-t border-border-soft pt-2 text-[10px] text-muted-foreground">
                   <div>
                     <div className="uppercase tracking-wider">Last success</div>
-                    <div className="mt-0.5 font-mono text-foreground">{s.last_success_at ? new Date(s.last_success_at).toLocaleString() : "—"}</div>
+                    <div className="mt-0.5 font-mono text-foreground">
+                      {s.last_success_at ? new Date(s.last_success_at).toLocaleString() : "—"}
+                    </div>
                   </div>
                   <div>
                     <div className="uppercase tracking-wider">Records / run</div>

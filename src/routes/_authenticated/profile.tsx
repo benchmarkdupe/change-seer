@@ -57,7 +57,10 @@ function ProfilePage() {
     <div className="min-h-screen bg-background pb-24">
       <header className="sticky top-0 z-20 border-b border-border bg-background/85 px-4 py-3 backdrop-blur">
         <div className="flex items-center justify-between">
-          <Link to="/" className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground"
+          >
             <ArrowLeft className="h-3.5 w-3.5" /> Back
           </Link>
           <button
@@ -78,7 +81,10 @@ function ProfilePage() {
         </h1>
         <div className="mt-1 flex flex-wrap gap-1.5">
           {data.roles.map((r) => (
-            <span key={r} className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+            <span
+              key={r}
+              className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground"
+            >
               {r}
             </span>
           ))}
@@ -110,10 +116,17 @@ function ProfilePage() {
             Details
           </h2>
           <Field label="Display name" value={displayName} onChange={setDisplayName} />
-          <Field label="Username" value={username} onChange={setUsername} placeholder="lowercase, letters/numbers" />
+          <Field
+            label="Username"
+            value={username}
+            onChange={setUsername}
+            placeholder="lowercase, letters/numbers"
+          />
           <Field label="Region" value={region} onChange={setRegion} placeholder="e.g. Berlin, DE" />
           <div>
-            <label className="text-[11px] uppercase tracking-wider text-muted-foreground">Bio</label>
+            <label className="text-[11px] uppercase tracking-wider text-muted-foreground">
+              Bio
+            </label>
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
@@ -146,8 +159,16 @@ function ProfilePage() {
 }
 
 function Field({
-  label, value, onChange, placeholder,
-}: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
   return (
     <div>
       <label className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</label>

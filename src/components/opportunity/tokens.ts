@@ -1,6 +1,17 @@
 import type { Category, ScoreBreakdown, VerificationStatus } from "@/domain/types/opportunity";
 import type { DataState } from "@/domain/dataState";
-import { Briefcase, TrendingUp, Package, Building2, Sparkles, DollarSign, ShieldCheck, ShieldAlert, ShieldQuestion, type LucideIcon } from "lucide-react";
+import {
+  Briefcase,
+  TrendingUp,
+  Package,
+  Building2,
+  Sparkles,
+  DollarSign,
+  ShieldCheck,
+  ShieldAlert,
+  ShieldQuestion,
+  type LucideIcon,
+} from "lucide-react";
 
 export const CATEGORY_META: Record<Category, { label: string; icon: LucideIcon; blurb: string }> = {
   business: { label: "Business", icon: Building2, blurb: "A local or regional business gap" },
@@ -13,16 +24,49 @@ export const CATEGORY_META: Record<Category, { label: string; icon: LucideIcon; 
 
 export function tierClass(rating: ScoreBreakdown["rating"]) {
   if (rating === "high_signal")
-    return { text: "text-tier-high", bg: "bg-tier-high-soft", ring: "ring-tier-high/30", label: "High signal" };
+    return {
+      text: "text-tier-high",
+      bg: "bg-tier-high-soft",
+      ring: "ring-tier-high/30",
+      label: "High signal",
+    };
   if (rating === "moderate")
-    return { text: "text-tier-mod", bg: "bg-tier-mod-soft", ring: "ring-tier-mod/30", label: "Moderate" };
-  return { text: "text-tier-low", bg: "bg-tier-low-soft", ring: "ring-tier-low/30", label: "Low signal" };
+    return {
+      text: "text-tier-mod",
+      bg: "bg-tier-mod-soft",
+      ring: "ring-tier-mod/30",
+      label: "Moderate",
+    };
+  return {
+    text: "text-tier-low",
+    bg: "bg-tier-low-soft",
+    ring: "ring-tier-low/30",
+    label: "Low signal",
+  };
 }
 
-export const VERIFICATION_META: Record<VerificationStatus, { icon: LucideIcon; label: string; text: string; bg: string }> = {
-  verified: { icon: ShieldCheck, label: "Verified", text: "text-state-verified", bg: "bg-state-verified-soft" },
-  pending: { icon: ShieldQuestion, label: "Pending", text: "text-state-pending", bg: "bg-state-pending-soft" },
-  unverified: { icon: ShieldAlert, label: "Unverified", text: "text-muted-foreground", bg: "bg-muted" },
+export const VERIFICATION_META: Record<
+  VerificationStatus,
+  { icon: LucideIcon; label: string; text: string; bg: string }
+> = {
+  verified: {
+    icon: ShieldCheck,
+    label: "Verified",
+    text: "text-state-verified",
+    bg: "bg-state-verified-soft",
+  },
+  pending: {
+    icon: ShieldQuestion,
+    label: "Pending",
+    text: "text-state-pending",
+    bg: "bg-state-pending-soft",
+  },
+  unverified: {
+    icon: ShieldAlert,
+    label: "Unverified",
+    text: "text-muted-foreground",
+    bg: "bg-muted",
+  },
 };
 
 export const DATA_STATE_STYLE: Record<DataState, { text: string; bg: string; dot: string }> = {

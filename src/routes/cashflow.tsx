@@ -6,9 +6,15 @@ export const Route = createFileRoute("/cashflow")({
   head: () => ({
     meta: [
       { title: "Cash Flow — OpportunityOS" },
-      { name: "description", content: "See every income source you've built from a single, honest view." },
+      {
+        name: "description",
+        content: "See every income source you've built from a single, honest view.",
+      },
       { property: "og:title", content: "Cash Flow — OpportunityOS" },
-      { property: "og:description", content: "One honest view of every project you're running — what's growing, what's not." },
+      {
+        property: "og:description",
+        content: "One honest view of every project you're running — what's growing, what's not.",
+      },
     ],
   }),
   component: () => (

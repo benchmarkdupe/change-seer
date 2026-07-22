@@ -6,17 +6,30 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "What is OpportunityOS?" },
-      { name: "description", content: "An operating system for opportunity — discover what's changing, understand why, decide what to build." },
+      {
+        name: "description",
+        content:
+          "An operating system for opportunity — discover what's changing, understand why, decide what to build.",
+      },
       { property: "og:title", content: "What is OpportunityOS?" },
-      { property: "og:description", content: "Discover → Understand → Build → Track → Improve → Expand." },
+      {
+        property: "og:description",
+        content: "Discover → Understand → Build → Track → Improve → Expand.",
+      },
     ],
   }),
   component: AboutPage,
 });
 
 const STEPS = [
-  { k: "Discover", d: "See what's changing in the world — search demand, local business gaps, resale margins, new markets." },
-  { k: "Understand", d: "Every opportunity comes with plain-language reasoning and the evidence that produced it — not a black box." },
+  {
+    k: "Discover",
+    d: "See what's changing in the world — search demand, local business gaps, resale margins, new markets.",
+  },
+  {
+    k: "Understand",
+    d: "Every opportunity comes with plain-language reasoning and the evidence that produced it — not a black box.",
+  },
   { k: "Build", d: "Turn an opportunity into a project you're actually working on." },
   { k: "Track", d: "Record what you spent, earned, and learned — in your own numbers." },
   { k: "Improve", d: "See which projects deserve more of your attention, which don't." },
@@ -39,14 +52,19 @@ function AboutPage() {
       </header>
 
       <article className="mx-auto max-w-2xl px-5 pb-10 pt-4">
-        <p className="text-[10px] font-medium uppercase tracking-wider text-primary">What this is</p>
+        <p className="text-[10px] font-medium uppercase tracking-wider text-primary">
+          What this is
+        </p>
         <h1 className="mt-2 font-display text-[30px] font-semibold leading-[1.1] tracking-tight">
-          An operating system<br/>
+          An operating system
+          <br />
           <span className="text-muted-foreground">for opportunity.</span>
         </h1>
 
         <p className="mt-5 text-[15px] leading-relaxed text-foreground/90">
-          OpportunityOS helps you understand what's changing, find where opportunity may exist, and turn useful opportunities into things you can actually build. It's not a business-idea generator and it's not a chatbot.
+          OpportunityOS helps you understand what's changing, find where opportunity may exist, and
+          turn useful opportunities into things you can actually build. It's not a business-idea
+          generator and it's not a chatbot.
         </p>
 
         <div className="mt-8 space-y-3">
@@ -66,14 +84,19 @@ function AboutPage() {
         <div className="mt-8 rounded-2xl border border-border bg-card p-5">
           <h2 className="font-display text-[16px] font-semibold">Every score is explainable</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-foreground/85">
-            OpportunityOS never shows a number without being able to show its math. Every signal comes from a specific scout, every scout says how sure it is, and every point of the final score maps to a line in the audit trail. If a user asks "why is this a 74?" — the answer is already data on the screen.
+            OpportunityOS never shows a number without being able to show its math. Every signal
+            comes from a specific scout, every scout says how sure it is, and every point of the
+            final score maps to a line in the audit trail. If a user asks "why is this a 74?" — the
+            answer is already data on the screen.
           </p>
         </div>
 
         <div className="mt-4 rounded-2xl border border-border bg-card p-5">
           <h2 className="font-display text-[16px] font-semibold">Sample data, real architecture</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-foreground/85">
-            Today, the scouts return seeded observations so you can see how the system thinks. When real scout integrations come online (Google Trends, Reddit, marketplaces, job boards, more) they slot into the same pipeline — the UI never changes.
+            Today, the scouts return seeded observations so you can see how the system thinks. When
+            real scout integrations come online (Google Trends, Reddit, marketplaces, job boards,
+            more) they slot into the same pipeline — the UI never changes.
           </p>
         </div>
 
