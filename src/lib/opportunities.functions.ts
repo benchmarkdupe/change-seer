@@ -54,14 +54,17 @@ export const getLiveOpportunities = createServerFn({ method: "GET" }).handler(
         }
 
         lastRun = startedAt.toISOString();
-        await supabaseAdmin.from("source_health").update({
-          status: "healthy",
-          last_success_at: lastRun,
-          last_error: null,
-          records_last_run: normalized.length,
-          total_runs: (healthRow ? 1 : 1) + 0,
-          updated_at: lastRun,
-        }).eq("scout_id", scoutId);
+        await supabaseAdmin
+          .from("source_health")
+          .update({
+            status: "healthy",
+            last_success_at: lastRun,
+            last_error: null,
+            records_last_run: normalized.length,
+            total_runs: (healthRow ? 1 : 1) + 0,
+            updated_at: lastRun,
+          })
+          .eq("scout_id", scoutId);
       }
 
       // Read the most recent signal per opportunity_key from the DB
@@ -94,7 +97,13 @@ export const getLiveOpportunities = createServerFn({ method: "GET" }).handler(
             detectedAt: s.detected_at,
           }));
           const score = engine.score("trend", raw);
-          const payload = sigs[0].raw_payload as { title?: string; url?: string; by?: string; score?: number; descendants?: number } | null;
+          const payload = sigs[0].raw_payload as {
+            title?: string;
+            url?: string;
+            by?: string;
+            score?: number;
+            descendants?: number;
+          } | null;
           const title = payload?.title ?? key;
           const sparkline = Array.from({ length: 10 }, (_, i) =>
             Math.max(5, Math.round(score.signalScore - (9 - i) * (score.momentum / 30))),
@@ -123,7 +132,8 @@ export const getLiveOpportunities = createServerFn({ method: "GET" }).handler(
                 "May be news/discussion, not a buildable opportunity",
               ],
               recommendedCapital: "N/A — evaluate the underlying content first",
-              difficultyExplanation: "Depends entirely on the underlying opportunity — this is a trend signal only.",
+              difficultyExplanation:
+                "Depends entirely on the underlying opportunity — this is a trend signal only.",
               howToBegin: [
                 "Read the source link and top comments to understand what's actually being discussed",
                 "Check if it's a company, technology, or observation — each implies different next steps",
@@ -141,12 +151,15 @@ export const getLiveOpportunities = createServerFn({ method: "GET" }).handler(
       return { opportunities, lastRun };
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      await supabaseAdmin.from("source_health").update({
-        status: "down",
-        last_failure_at: new Date().toISOString(),
-        last_error: message.slice(0, 500),
-        updated_at: new Date().toISOString(),
-      }).eq("scout_id", scoutId);
+      await supabaseAdmin
+        .from("source_health")
+        .update({
+          status: "down",
+          last_failure_at: new Date().toISOString(),
+          last_error: message.slice(0, 500),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("scout_id", scoutId);
       return { opportunities: [], lastRun };
     }
   },

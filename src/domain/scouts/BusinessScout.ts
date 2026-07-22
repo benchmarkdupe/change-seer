@@ -14,14 +14,16 @@ export class BusinessScout extends BaseScout {
         opportunityKey: "mobile-diesel-fleet-diagnostics",
         type: "market_growth",
         value: 68,
-        evidence: "3 new independent fleet-service listings registered in county in trailing 6 months, zero mobile-diagnostic-specific competitors",
+        evidence:
+          "3 new independent fleet-service listings registered in county in trailing 6 months, zero mobile-diagnostic-specific competitors",
         sourceConfidence: 82,
       }),
       this.makeSignal({
         opportunityKey: "mobile-diesel-fleet-diagnostics",
         type: "competition",
         value: 29,
-        evidence: "No dedicated mobile diagnostic operators found within county in business registry search",
+        evidence:
+          "No dedicated mobile diagnostic operators found within county in business registry search",
         sourceConfidence: 75,
       }),
       this.makeSignal({

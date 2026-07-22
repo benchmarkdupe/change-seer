@@ -76,7 +76,16 @@ export const REASON_TEMPLATES: Record<SignalType, { up: string; down: string }> 
   startup_cost: { up: "High capital requirement", down: "Low barrier to entry" },
   difficulty: { up: "High execution difficulty", down: "Approachable execution difficulty" },
   momentum: { up: "Accelerating momentum", down: "Momentum stalling" },
-  community_interest: { up: "Discussion volume increasing", down: "Discussion volume flat or falling" },
-  market_saturation: { up: "Supply-side crowding out", down: "Supplier/space availability increasing" },
-  verification_confidence: { up: "Strongly corroborated across sources", down: "Limited corroboration" },
+  community_interest: {
+    up: "Discussion volume increasing",
+    down: "Discussion volume flat or falling",
+  },
+  market_saturation: {
+    up: "Supply-side crowding out",
+    down: "Supplier/space availability increasing",
+  },
+  verification_confidence: {
+    up: "Strongly corroborated across sources",
+    down: "Limited corroboration",
+  },
 };

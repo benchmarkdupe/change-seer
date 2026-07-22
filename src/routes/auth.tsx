@@ -8,9 +8,16 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — OpportunityOS" },
-      { name: "description", content: "Sign in to save opportunities, track what you build, and earn founding-tester status." },
+      {
+        name: "description",
+        content:
+          "Sign in to save opportunities, track what you build, and earn founding-tester status.",
+      },
       { property: "og:title", content: "Sign in to OpportunityOS" },
-      { property: "og:description", content: "Save opportunities, track projects, earn founding-tester status." },
+      {
+        property: "og:description",
+        content: "Save opportunities, track projects, earn founding-tester status.",
+      },
     ],
   }),
   component: AuthPage,
@@ -74,7 +81,10 @@ function AuthPage() {
 
   return (
     <div className="min-h-screen bg-background px-5 py-6">
-      <Link to="/" className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground">
+      <Link
+        to="/"
+        className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="h-3.5 w-3.5" /> Back
       </Link>
 
@@ -97,7 +107,24 @@ function AuthPage() {
           disabled={busy}
           className="mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-border bg-surface text-[14px] font-medium text-foreground transition-colors hover:border-primary/40 disabled:opacity-50"
         >
-          <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.5 1.2 8.9 3.5l6.6-6.6C35.5 2.5 30.1 0 24 0 14.6 0 6.4 5.4 2.5 13.3l7.7 6c1.9-5.5 7-9.8 13.8-9.8z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.5 3-2.2 5.5-4.7 7.2l7.4 5.7c4.3-4 6.8-9.8 6.8-17.4z"/><path fill="#FBBC05" d="M10.2 28.7c-.5-1.5-.8-3.1-.8-4.7s.3-3.2.8-4.7l-7.7-6C1 16.6 0 20.2 0 24s1 7.4 2.5 10.7l7.7-6z"/><path fill="#34A853" d="M24 48c6.1 0 11.3-2 15.1-5.5l-7.4-5.7c-2 1.4-4.6 2.2-7.7 2.2-6.8 0-12.5-4.5-14.5-10.6l-7.7 6C6.4 42.6 14.6 48 24 48z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 48 48">
+            <path
+              fill="#EA4335"
+              d="M24 9.5c3.5 0 6.5 1.2 8.9 3.5l6.6-6.6C35.5 2.5 30.1 0 24 0 14.6 0 6.4 5.4 2.5 13.3l7.7 6c1.9-5.5 7-9.8 13.8-9.8z"
+            />
+            <path
+              fill="#4285F4"
+              d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.5 3-2.2 5.5-4.7 7.2l7.4 5.7c4.3-4 6.8-9.8 6.8-17.4z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M10.2 28.7c-.5-1.5-.8-3.1-.8-4.7s.3-3.2.8-4.7l-7.7-6C1 16.6 0 20.2 0 24s1 7.4 2.5 10.7l7.7-6z"
+            />
+            <path
+              fill="#34A853"
+              d="M24 48c6.1 0 11.3-2 15.1-5.5l-7.4-5.7c-2 1.4-4.6 2.2-7.7 2.2-6.8 0-12.5-4.5-14.5-10.6l-7.7 6C6.4 42.6 14.6 48 24 48z"
+            />
+          </svg>
           Continue with Google
         </button>
 
@@ -115,21 +142,28 @@ function AuthPage() {
             />
           )}
           <input
-            type="email" required autoComplete="email"
-            value={email} onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            required
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             className="h-11 w-full rounded-xl border border-border bg-surface px-3.5 text-[14px] focus:border-primary focus:outline-none"
           />
           <input
-            type="password" required minLength={6}
+            type="password"
+            required
+            minLength={6}
             autoComplete={mode === "signin" ? "current-password" : "new-password"}
-            value={password} onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             className="h-11 w-full rounded-xl border border-border bg-surface px-3.5 text-[14px] focus:border-primary focus:outline-none"
           />
           {err && <p className="text-[12px] text-tier-low">{err}</p>}
           <button
-            type="submit" disabled={busy}
+            type="submit"
+            disabled={busy}
             className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-[14px] font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
           >
             {busy && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -139,7 +173,10 @@ function AuthPage() {
 
         <button
           type="button"
-          onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setErr(null); }}
+          onClick={() => {
+            setMode(mode === "signin" ? "signup" : "signin");
+            setErr(null);
+          }}
           className="mt-4 w-full text-center text-[12px] text-muted-foreground hover:text-foreground"
         >
           {mode === "signin" ? "No account? Create one." : "Already have an account? Sign in."}

@@ -1,7 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
 import { getSampleOpportunityById, SAMPLE_DATA_STATE } from "@/data/sample/opportunities";
-import { CATEGORY_META, tierClass, formatRange, relativeDate } from "@/components/opportunity/tokens";
+import {
+  CATEGORY_META,
+  tierClass,
+  formatRange,
+  relativeDate,
+} from "@/components/opportunity/tokens";
 import { VerificationBadge } from "@/components/opportunity/VerificationBadge";
 import { DataStateBadge } from "@/components/opportunity/DataStateBadge";
 import { Sparkline } from "@/components/opportunity/Sparkline";
@@ -45,8 +50,15 @@ function OppNotFound() {
     <AppShell>
       <div className="mx-auto max-w-md px-6 py-16 text-center">
         <h1 className="font-display text-2xl font-semibold">Opportunity not found</h1>
-        <p className="mt-2 text-sm text-muted-foreground">This signal may have been removed or the link is out of date.</p>
-        <Link to="/" className="mt-6 inline-flex rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Back to Discover</Link>
+        <p className="mt-2 text-sm text-muted-foreground">
+          This signal may have been removed or the link is out of date.
+        </p>
+        <Link
+          to="/"
+          className="mt-6 inline-flex rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+        >
+          Back to Discover
+        </Link>
       </div>
     </AppShell>
   );
@@ -109,7 +121,13 @@ function OpportunityDetail() {
           <MetricExplainer
             label="Signal"
             value={opp.score.signalScore}
-            tone={opp.score.rating === "high_signal" ? "high" : opp.score.rating === "moderate" ? "mod" : "low"}
+            tone={
+              opp.score.rating === "high_signal"
+                ? "high"
+                : opp.score.rating === "moderate"
+                  ? "mod"
+                  : "low"
+            }
             explainer="Signal Score is a 0-100 composite of every weighted piece of evidence the scouts collected for this opportunity, using the weight profile for its category. Higher means the underlying signals point more strongly toward opportunity."
           />
           <MetricExplainer
@@ -138,11 +156,15 @@ function OpportunityDetail() {
 
         {/* L2 — why this matters */}
         <Disclosure title="Why now" subtitle="The change that made this appear" defaultOpen>
-          <p className="text-[14px] leading-relaxed text-foreground/90">{opp.aiDetail.whyGrowing}</p>
+          <p className="text-[14px] leading-relaxed text-foreground/90">
+            {opp.aiDetail.whyGrowing}
+          </p>
         </Disclosure>
 
         <Disclosure title="Who this suits" subtitle="Who's actually pulling this off">
-          <p className="text-[14px] leading-relaxed text-foreground/90">{opp.aiDetail.whoIsSucceeding}</p>
+          <p className="text-[14px] leading-relaxed text-foreground/90">
+            {opp.aiDetail.whoIsSucceeding}
+          </p>
         </Disclosure>
 
         <Disclosure title="Risks & unknowns" subtitle="What could make this a bad bet">
@@ -170,7 +192,11 @@ function OpportunityDetail() {
             />
             <MetricExplainer
               label="Difficulty"
-              value={<span className="capitalize text-[13px]">{opp.estimatedDifficulty.replace("_", " ")}</span>}
+              value={
+                <span className="capitalize text-[13px]">
+                  {opp.estimatedDifficulty.replace("_", " ")}
+                </span>
+              }
               explainer="How hard it typically is to execute — combining technical skill, business setup, and market navigation. Not a measure of whether it's worth doing."
             />
             <MetricExplainer
@@ -193,7 +219,10 @@ function OpportunityDetail() {
           </p>
         </Disclosure>
 
-        <Disclosure title="A reasonable first step" subtitle="Not a business plan — a starting move">
+        <Disclosure
+          title="A reasonable first step"
+          subtitle="Not a business plan — a starting move"
+        >
           <ol className="space-y-3">
             {opp.aiDetail.howToBegin.map((step, i) => (
               <li key={step} className="flex gap-3">
@@ -206,10 +235,16 @@ function OpportunityDetail() {
           </ol>
         </Disclosure>
 
-        <Disclosure title="Evidence" subtitle={`${opp.score.contributions.length} signal${opp.score.contributions.length === 1 ? "" : "s"} from ${opp.sourceScoutIds.length} scout${opp.sourceScoutIds.length === 1 ? "" : "s"}`}>
+        <Disclosure
+          title="Evidence"
+          subtitle={`${opp.score.contributions.length} signal${opp.score.contributions.length === 1 ? "" : "s"} from ${opp.sourceScoutIds.length} scout${opp.sourceScoutIds.length === 1 ? "" : "s"}`}
+        >
           <ul className="space-y-2">
             {opp.aiDetail.publicEvidence.map((e) => (
-              <li key={e.label} className="rounded-xl border border-border-soft bg-surface-sunken/60 p-3">
+              <li
+                key={e.label}
+                className="rounded-xl border border-border-soft bg-surface-sunken/60 p-3"
+              >
                 <p className="text-[13px] leading-relaxed text-foreground/90">{e.label}</p>
                 <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
                   {e.sourceScoutId}
@@ -225,7 +260,8 @@ function OpportunityDetail() {
 
         <div className="rounded-2xl border border-dashed border-border p-4 text-[12px] leading-relaxed text-muted-foreground">
           <strong className="font-semibold text-foreground">Heads up: </strong>
-          This opportunity is built on sample data for illustration. Real scout integrations will replace it — the scoring, evidence, and audit trail architecture above are the real thing.
+          This opportunity is built on sample data for illustration. Real scout integrations will
+          replace it — the scoring, evidence, and audit trail architecture above are the real thing.
         </div>
       </article>
     </AppShell>

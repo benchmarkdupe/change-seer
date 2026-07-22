@@ -30,6 +30,5 @@ export const DATA_STATE_EXPLAINER: Record<DataState, string> = {
     "This came from a real source, but the data is older than its normal refresh window — treat with caution.",
   pending:
     "One scout observed this, but it hasn't been corroborated by a second independent source yet.",
-  verified:
-    "Cross-corroborated across at least two independent scouts or sources.",
+  verified: "Cross-corroborated across at least two independent scouts or sources.",
 };

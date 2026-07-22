@@ -14,14 +14,16 @@ export class MarketplaceScout extends BaseScout {
         opportunityKey: "obs-bronco-restoration-demand",
         type: "revenue_potential",
         value: 81,
-        evidence: "BaT sold prices on clean 1992-96 Broncos up ~18% YoY, outpacing comparable OBS trucks",
+        evidence:
+          "BaT sold prices on clean 1992-96 Broncos up ~18% YoY, outpacing comparable OBS trucks",
         sourceConfidence: 88,
       }),
       this.makeSignal({
         opportunityKey: "obs-bronco-restoration-demand",
         type: "market_saturation",
         value: 34,
-        evidence: "Low count of restoration-ready sellers relative to buyer inquiries in sold listings",
+        evidence:
+          "Low count of restoration-ready sellers relative to buyer inquiries in sold listings",
         sourceConfidence: 60,
       }),
       this.makeSignal({

@@ -47,7 +47,13 @@ export function SaveButton({
       aria-label={saved ? "Remove from saved" : "Save opportunity"}
       className={`grid ${dim} shrink-0 place-items-center rounded-full border border-border bg-background/70 text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary disabled:opacity-50`}
     >
-      {busy ? <Loader2 className={`${icon} animate-spin`} /> : saved ? <BookmarkCheck className={`${icon} text-primary`} /> : <Bookmark className={icon} />}
+      {busy ? (
+        <Loader2 className={`${icon} animate-spin`} />
+      ) : saved ? (
+        <BookmarkCheck className={`${icon} text-primary`} />
+      ) : (
+        <Bookmark className={icon} />
+      )}
     </button>
   );
 }
