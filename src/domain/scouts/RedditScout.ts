@@ -18,7 +18,8 @@ export class RedditScout extends BaseScout {
         opportunityKey: "predator-212-parts-bundle",
         type: "community_interest",
         value: 66,
-        evidence: "r/gokarts: recurring weekly thread requesting a stage-2 parts bundle, 40+ comments",
+        evidence:
+          "r/gokarts: recurring weekly thread requesting a stage-2 parts bundle, 40+ comments",
         sourceConfidence: 55,
       }),
       this.makeSignal({

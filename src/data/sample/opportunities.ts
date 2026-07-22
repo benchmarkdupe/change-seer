@@ -11,11 +11,7 @@
  */
 import { runAllScouts, groupSignalsByOpportunity } from "@/domain/scouts";
 import { ScoringEngine } from "@/domain/scoring/ScoringEngine";
-import type {
-  Opportunity,
-  Category,
-  Difficulty,
-} from "@/domain/types/opportunity";
+import type { Opportunity, Category, Difficulty } from "@/domain/types/opportunity";
 import type { DataState } from "@/domain/dataState";
 
 interface OpportunitySeed {
@@ -69,8 +65,14 @@ const SEEDS: OpportunitySeed[] = [
       timeToProfitability:
         "Typically 2-4 months to break even on setup costs given existing technical skill.",
       publicEvidence: [
-        { label: "County business registry: 0 dedicated mobile diagnostic operators found", sourceScoutId: "business_scout" },
-        { label: "Search interest for 'mobile diesel diagnostic near me' trending up regionally", sourceScoutId: "google_trend_scout" },
+        {
+          label: "County business registry: 0 dedicated mobile diagnostic operators found",
+          sourceScoutId: "business_scout",
+        },
+        {
+          label: "Search interest for 'mobile diesel diagnostic near me' trending up regionally",
+          sourceScoutId: "google_trend_scout",
+        },
       ],
     },
   },
@@ -109,9 +111,15 @@ const SEEDS: OpportunitySeed[] = [
       timeToProfitability:
         "First flip typically 3-6 months depending on parts sourcing; ongoing cadence depends on garage capacity.",
       publicEvidence: [
-        { label: "BaT sold prices on 1992-96 Broncos up ~18% YoY", sourceScoutId: "marketplace_scout" },
+        {
+          label: "BaT sold prices on 1992-96 Broncos up ~18% YoY",
+          sourceScoutId: "marketplace_scout",
+        },
         { label: "r/Bronco OBS-specific post volume up ~30% QoQ", sourceScoutId: "reddit_scout" },
-        { label: "'OBS Bronco parts' search interest climbing since Q1", sourceScoutId: "google_trend_scout" },
+        {
+          label: "'OBS Bronco parts' search interest climbing since Q1",
+          sourceScoutId: "google_trend_scout",
+        },
       ],
     },
   },
@@ -150,7 +158,10 @@ const SEEDS: OpportunitySeed[] = [
       timeToProfitability:
         "High variance — some stores profitable within weeks, many never reach it; this is the riskiest opportunity in this scan.",
       publicEvidence: [
-        { label: "'LED light bar off-road' search interest +42% trailing 90 days", sourceScoutId: "google_trend_scout" },
+        {
+          label: "'LED light bar off-road' search interest +42% trailing 90 days",
+          sourceScoutId: "google_trend_scout",
+        },
       ],
     },
   },
@@ -185,7 +196,10 @@ const SEEDS: OpportunitySeed[] = [
       ],
       timeToProfitability: "N/A — standard employment timeline.",
       publicEvidence: [
-        { label: "Posted rate $4-7/hr above trailing 12-month regional median", sourceScoutId: "job_scout" },
+        {
+          label: "Posted rate $4-7/hr above trailing 12-month regional median",
+          sourceScoutId: "job_scout",
+        },
       ],
     },
   },
@@ -222,7 +236,10 @@ const SEEDS: OpportunitySeed[] = [
       timeToProfitability:
         "Typically profitable from first sale given low inventory cost; scaling requires consistent sourcing.",
       publicEvidence: [
-        { label: "eBay sold data: stable 25-35% margin on used Snap-on take-offs", sourceScoutId: "marketplace_scout" },
+        {
+          label: "eBay sold data: stable 25-35% margin on used Snap-on take-offs",
+          sourceScoutId: "marketplace_scout",
+        },
       ],
     },
   },
@@ -272,8 +289,7 @@ async function buildSampleOpportunities(): Promise<Opportunity[]> {
  * are wired in, this module gets replaced with a TanStack Query loader
  * against the persistence layer — no consumer of this module changes.
  */
-export const SAMPLE_OPPORTUNITIES: readonly Opportunity[] =
-  await buildSampleOpportunities();
+export const SAMPLE_OPPORTUNITIES: readonly Opportunity[] = await buildSampleOpportunities();
 
 export function getSampleOpportunityById(id: string): Opportunity | undefined {
   return SAMPLE_OPPORTUNITIES.find((o) => o.id === id);

@@ -1,4 +1,14 @@
-import { Sparkles, Crown, Zap, Hammer, TrendingUp, Radar, ShieldCheck, Award, type LucideIcon } from "lucide-react";
+import {
+  Sparkles,
+  Crown,
+  Zap,
+  Hammer,
+  TrendingUp,
+  Radar,
+  ShieldCheck,
+  Award,
+  type LucideIcon,
+} from "lucide-react";
 
 const ICONS: Record<string, LucideIcon> = {
   sparkles: Sparkles,
@@ -46,12 +56,17 @@ export function BadgeChip({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="font-display text-[13px] font-semibold">{name}</span>
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{rarity}</span>
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            {rarity}
+          </span>
         </div>
-        {description && <p className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground">{description}</p>}
+        {description && (
+          <p className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground">{description}</p>
+        )}
         {issueNumber != null && (
           <p className="mt-1 font-mono text-[10px] text-primary">
-            #{String(issueNumber).padStart(3, "0")}{maxSupply ? ` / ${maxSupply}` : ""}
+            #{String(issueNumber).padStart(3, "0")}
+            {maxSupply ? ` / ${maxSupply}` : ""}
           </p>
         )}
       </div>

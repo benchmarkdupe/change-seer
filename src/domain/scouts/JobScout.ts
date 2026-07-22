@@ -12,7 +12,8 @@ export class JobScout extends BaseScout {
         opportunityKey: "emergency-vehicle-upfit-tech-ii",
         type: "revenue_potential",
         value: 74,
-        evidence: "Posted rate $4-7/hr above trailing 12-month market median for comparable roles in region",
+        evidence:
+          "Posted rate $4-7/hr above trailing 12-month market median for comparable roles in region",
         sourceConfidence: 90,
       }),
       this.makeSignal({

@@ -25,10 +25,10 @@ export function MetricExplainer({
     tone === "high"
       ? "text-tier-high"
       : tone === "mod"
-      ? "text-tier-mod"
-      : tone === "low"
-      ? "text-tier-low"
-      : "text-foreground";
+        ? "text-tier-mod"
+        : tone === "low"
+          ? "text-tier-low"
+          : "text-foreground";
 
   return (
     <>

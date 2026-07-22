@@ -33,7 +33,7 @@ export abstract class BaseScout implements Scout {
   abstract collect(): Promise<RawSignal[]>;
 
   protected makeSignal(
-    partial: Omit<RawSignal, "scoutId" | "detectedAt"> & { detectedAt?: string }
+    partial: Omit<RawSignal, "scoutId" | "detectedAt"> & { detectedAt?: string },
   ): RawSignal {
     return {
       ...partial,

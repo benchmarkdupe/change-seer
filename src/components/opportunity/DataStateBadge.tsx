@@ -2,7 +2,13 @@ import type { DataState } from "@/domain/dataState";
 import { DATA_STATE_LABEL } from "@/domain/dataState";
 import { DATA_STATE_STYLE } from "./tokens";
 
-export function DataStateBadge({ state, className = "" }: { state: DataState; className?: string }) {
+export function DataStateBadge({
+  state,
+  className = "",
+}: {
+  state: DataState;
+  className?: string;
+}) {
   const s = DATA_STATE_STYLE[state];
   return (
     <span

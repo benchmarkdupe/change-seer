@@ -54,8 +54,8 @@
   /* Tier — signal strength */
   --tier-high: oklch(0.78 0.14 165);
   --tier-high-soft: oklch(0.78 0.14 165 / 0.14);
-  --tier-mod: oklch(0.80 0.14 80);
-  --tier-mod-soft: oklch(0.80 0.14 80 / 0.14);
+  --tier-mod: oklch(0.8 0.14 80);
+  --tier-mod-soft: oklch(0.8 0.14 80 / 0.14);
   --tier-low: oklch(0.68 0.12 25);
   --tier-low-soft: oklch(0.68 0.12 25 / 0.14);
 
@@ -64,12 +64,12 @@
   --state-sample-soft: oklch(0.72 0.05 80 / 0.12);
   --state-live: oklch(0.78 0.14 165);
   --state-live-soft: oklch(0.78 0.14 165 / 0.14);
-  --state-pending: oklch(0.80 0.14 80);
-  --state-pending-soft: oklch(0.80 0.14 80 / 0.14);
+  --state-pending: oklch(0.8 0.14 80);
+  --state-pending-soft: oklch(0.8 0.14 80 / 0.14);
   --state-verified: oklch(0.75 0.13 200);
   --state-verified-soft: oklch(0.75 0.13 200 / 0.14);
-  --state-stale: oklch(0.60 0.03 60);
-  --state-stale-soft: oklch(0.60 0.03 60 / 0.12);
+  --state-stale: oklch(0.6 0.03 60);
+  --state-stale-soft: oklch(0.6 0.03 60 / 0.12);
 
   /* Type */
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;

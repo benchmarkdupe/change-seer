@@ -14,7 +14,15 @@ function MomentumIcon({ momentum }: { momentum: number }) {
   return <Minus className={`${cls} text-muted-foreground`} />;
 }
 
-export function OpportunityCard({ opp, dataState, isSaved = false }: { opp: Opportunity; dataState: DataState; isSaved?: boolean }) {
+export function OpportunityCard({
+  opp,
+  dataState,
+  isSaved = false,
+}: {
+  opp: Opportunity;
+  dataState: DataState;
+  isSaved?: boolean;
+}) {
   const tier = tierClass(opp.score.rating);
   const cat = CATEGORY_META[opp.category];
   const Icon = cat.icon;
@@ -40,8 +48,12 @@ export function OpportunityCard({ opp, dataState, isSaved = false }: { opp: Oppo
         </div>
         <div className="flex shrink-0 items-start gap-2">
           <div className="text-right">
-            <div className={`font-mono text-2xl font-semibold leading-none ${tier.text}`}>{opp.score.signalScore}</div>
-            <div className={`mt-1 text-[9px] font-medium uppercase tracking-wider ${tier.text}`}>{tier.label}</div>
+            <div className={`font-mono text-2xl font-semibold leading-none ${tier.text}`}>
+              {opp.score.signalScore}
+            </div>
+            <div className={`mt-1 text-[9px] font-medium uppercase tracking-wider ${tier.text}`}>
+              {tier.label}
+            </div>
           </div>
           <SaveButton opportunityId={opp.id} initiallySaved={isSaved} />
         </div>
