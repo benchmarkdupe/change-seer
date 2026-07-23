@@ -6,9 +6,9 @@ This project is built with TanStack Start, React, Tailwind CSS, and Supabase.
 
 Run the app locally with Node.js and npm.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Iterate quickly**: build, run, and refine the app from your local environment.
+- **Stay in sync**: connect the project to GitHub and keep your changes versioned in your repository.
+- **Own your stack**: this code is yours to run, extend, and deploy as needed.
 
 ## Development
 
