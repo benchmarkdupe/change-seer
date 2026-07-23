@@ -3,6 +3,15 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
+function parseAuthErrorFromUrl() {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  const error = params.get("error");
+  const errorDescription = params.get("error_description");
+  if (!error) return null;
+  return errorDescription ? `${error}: ${errorDescription}` : error;
+}
+
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
@@ -23,6 +32,13 @@ function AuthPage() {
   const [err, setErr] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    const authError = parseAuthErrorFromUrl();
+    if (authError) {
+      setErr(authError);
+    }
+  }, []);
 
   useEffect(() => {
     let active = true;
