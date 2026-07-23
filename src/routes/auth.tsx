@@ -25,9 +25,34 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/" });
+    let active = true;
+
+    const handleSession = async () => {
+      const { error: urlError } = await supabase.auth.getSessionFromUrl({ storeSession: true });
+      if (!active) return;
+      if (urlError) {
+        console.warn("auth redirect handling failed", urlError);
+      }
+
+      const { data } = await supabase.auth.getSession();
+      if (!active) return;
+      if (data.session) {
+        navigate({ to: "/" });
+      }
+    };
+
+    void handleSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        navigate({ to: "/" });
+      }
     });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   const submit = async (e: React.FormEvent) => {
@@ -39,7 +64,7 @@ function AuthPage() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: `${window.location.origin}/auth`,
           shouldCreateUser: mode === "signup",
           data: mode === "signup"
             ? { display_name: displayName || email.split("@")[0] }

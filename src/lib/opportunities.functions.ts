@@ -1,5 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import type { Opportunity } from "@/domain/types/opportunity";
+import { buildDefaultScoreEnvelope } from "@/lib/opportunity-scoring.server";
+import { buildIngestionEnvelope } from "@/domain/ingestion/normalize";
+import { ingestOpportunityEnvelope } from "@/lib/opportunity-ingestion.server";
 
 /**
  * Fetches the latest live opportunities derived from real scouts (currently
@@ -51,6 +54,47 @@ export const getLiveOpportunities = createServerFn({ method: "GET" }).handler(
               raw_payload: s.raw_payload as unknown as never,
             })),
           );
+
+          for (const entry of normalized.slice(0, 6)) {
+            const envelope = buildIngestionEnvelope({
+              sourceId: scoutId,
+              externalId: entry.opportunity_key,
+              title: entry.evidence || entry.opportunity_key,
+              category: "trend",
+              evidenceSummary: entry.evidence,
+              sourceReliability: entry.source_confidence,
+              dataQualityScore: Math.min(100, entry.source_confidence + 10),
+              confidenceScore: entry.source_confidence,
+              trendAnalytics: { momentum: entry.value },
+              discoveredAt: entry.detected_at ?? new Date().toISOString(),
+              lastUpdatedAt: entry.detected_at ?? new Date().toISOString(),
+              sourceUrl: entry.source_url ?? null,
+            });
+            const score = buildDefaultScoreEnvelope({ envelope, budget: 1000 });
+            await ingestOpportunityEnvelope({
+              ...envelope,
+              rawRecord: {
+                sourceId: scoutId,
+                externalId: entry.opportunity_key,
+                sourceType: "hacker_news",
+                sourceUrl: entry.source_url ?? null,
+                payload: { raw: entry },
+                discoveredAt: entry.detected_at ?? new Date().toISOString(),
+                lastSeenAt: entry.detected_at ?? new Date().toISOString(),
+              },
+              evidence: [{
+                opportunityId: "",
+                evidenceType: "signal",
+                summary: entry.evidence,
+                sourceUrl: entry.source_url ?? null,
+                reliabilityScore: entry.source_confidence,
+                confidenceScore: entry.source_confidence,
+                evidenceAt: entry.detected_at ?? new Date().toISOString(),
+              }],
+              score: { ...score, opportunityId: "" },
+              analytics: [{ opportunityId: "", score: score.overallScore, trendDirection: score.trendMomentumScore >= 60 ? "up" : "flat", engagementScore: entry.value, sourceCount: 1, evidenceCount: 1 }],
+            });
+          }
         }
 
         lastRun = startedAt.toISOString();
