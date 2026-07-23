@@ -5,6 +5,34 @@ import { z } from "zod";
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const now = new Date().toISOString();
+    const {
+      data: userData,
+      error: userError,
+    } = await context.supabase.auth.getUser();
+    if (userError || !userData.user) {
+      throw userError ?? new Error("Unable to resolve authenticated user");
+    }
+
+    const { data: existingProfile, error: existingProfileError } = await context.supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", context.userId)
+      .maybeSingle();
+
+    if (existingProfileError) throw existingProfileError;
+
+    if (!existingProfile) {
+      const { error: insertError } = await context.supabase.from("profiles").insert({
+        id: context.userId,
+        display_name: userData.user.user_metadata?.display_name ?? userData.user.email?.split("@")[0] ?? null,
+        visibility: "private",
+        created_at: now,
+        updated_at: now,
+      });
+      if (insertError) throw insertError;
+    }
+
     const [profileRes, rolesRes, badgesRes] = await Promise.all([
       context.supabase.from("profiles").select("*").eq("id", context.userId).maybeSingle(),
       context.supabase.from("user_roles").select("role").eq("user_id", context.userId),

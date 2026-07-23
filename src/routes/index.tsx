@@ -49,6 +49,7 @@ function DiscoverPage() {
   const [active, setActive] = useState<Category[]>(ALL_CATEGORIES);
   const [minScore, setMinScore] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
+  const [showSample, setShowSample] = useState(false);
   const [feed, setFeed] = useState<"all" | "saved">("all");
 
   useEffect(() => { if (!user) setFeed("all"); }, [user]);
@@ -60,9 +61,9 @@ function DiscoverPage() {
 
   const combined = useMemo(() => {
     const live = (liveQuery.data?.opportunities ?? []).map((o) => ({ opp: o, state: "live" as DataState }));
-    const sample = SAMPLE_OPPORTUNITIES.map((o) => ({ opp: o, state: SAMPLE_DATA_STATE }));
+    const sample = showSample ? SAMPLE_OPPORTUNITIES.map((o) => ({ opp: o, state: SAMPLE_DATA_STATE })) : [];
     return [...live, ...sample];
-  }, [liveQuery.data]);
+  }, [liveQuery.data, showSample]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -112,8 +113,8 @@ function DiscoverPage() {
           </h1>
           <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
             {liveQuery.isLoading ? "Fetching live signals…" :
-             liveQuery.data?.opportunities.length ? `${liveQuery.data.opportunities.length} live signals from Hacker News, plus curated sample opportunities.` :
-             "Sample opportunities below; live scouts refresh in the background."}
+             liveQuery.data?.opportunities.length ? `${liveQuery.data.opportunities.length} live signals from Hacker News.` :
+             (showSample ? "Demo opportunities are shown below because sample mode is enabled." : "No live signals are available right now. Enable demo mode to view sample opportunities." )}
           </p>
 
           <div className="mt-4 flex items-center gap-2">
@@ -140,6 +141,18 @@ function DiscoverPage() {
               </button>
             </div>
           )}
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-[12px] text-muted-foreground">
+            <button
+              type="button"
+              onClick={() => setShowSample((prev) => !prev)}
+              className={`rounded-full border px-3 py-1 ${showSample ? "border-primary bg-primary-soft text-primary" : "border-border bg-surface text-muted-foreground"}`}
+            >
+              {showSample ? "Hide demo opportunities" : "Show demo opportunities"}
+            </button>
+            <span className="text-[11px] text-muted-foreground">
+              Demo opportunities are hidden by default and only shown when explicitly enabled.
+            </span>
+          </div>
         </div>
 
         <div className="scrollbar-none flex gap-2 overflow-x-auto px-4 pb-3">

@@ -1,10 +1,10 @@
-# Welcome to your Lovable project
+# OpportunityOS
 
-This project was built with [Lovable](https://lovable.dev).
+This project is built with TanStack Start, React, Tailwind CSS, and Supabase.
 
-## Build with Lovable
+## Development
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Run the app locally with Node.js and npm.
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
 - **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
