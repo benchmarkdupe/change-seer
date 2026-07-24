@@ -1,6 +1,6 @@
 import type { Category, ScoreBreakdown, VerificationStatus } from "@/domain/types/opportunity";
 import type { DataState } from "@/domain/dataState";
-import { Briefcase, TrendingUp, Package, Building2, Sparkles, DollarSign, ShieldCheck, ShieldAlert, ShieldQuestion, type LucideIcon } from "lucide-react";
+import { Briefcase, TrendingUp, Package, Building2, Sparkles, DollarSign, ShoppingCart, ShieldCheck, ShieldAlert, ShieldQuestion, type LucideIcon } from "lucide-react";
 
 export const CATEGORY_META: Record<Category, { label: string; icon: LucideIcon; blurb: string }> = {
   business: { label: "Business", icon: Building2, blurb: "A local or regional business gap" },
@@ -9,6 +9,7 @@ export const CATEGORY_META: Record<Category, { label: string; icon: LucideIcon; 
   investment: { label: "Investment", icon: TrendingUp, blurb: "A market signal worth watching" },
   trend: { label: "Trend", icon: Sparkles, blurb: "Something shifting in the world" },
   income: { label: "Online Income", icon: DollarSign, blurb: "An online income avenue" },
+  dropshipping: { label: "Drop Shipping", icon: ShoppingCart, blurb: "Digital or physical — sell it without holding inventory" },
 };
 
 export function tierClass(rating: ScoreBreakdown["rating"]) {

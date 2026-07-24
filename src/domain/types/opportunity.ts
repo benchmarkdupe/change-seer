@@ -6,7 +6,8 @@ export type Category =
   | "job"
   | "investment"
   | "trend"
-  | "income";
+  | "income"
+  | "dropshipping";
 
 export type VerificationStatus = "verified" | "pending" | "unverified";
 export type TrendDirection = "up" | "down" | "flat";

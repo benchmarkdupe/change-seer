@@ -106,6 +106,13 @@ the strongest evidence tier the app has anywhere: measured audience outcome, not
 Reads youtube-worker's already-cached analytics rather than forcing a fresh YouTube Data API
 call every refresh, to stay well inside its quota.
 
+**Drop Shipping tab** (digital + physical — POD, private label, reselling, digital
+downloads): `isDropshippingIdea` in `ai-ecosystem.server.ts` keyword-classifies fetched ideas
+and routes matches to their own category/weight profile via `getLiveDropshippingOpportunities`
+instead of the general income feed. No separate AI budget — it reuses the same
+`AI_ECOSYSTEM_SEED_PER_REFRESH`-governed seeding, alternating by hour between real trending
+signals and a small evergreen dropshipping-archetype pool so this category gets populated too.
+
 ## AI build prompt
 
 Every opportunity's detail page has a "Build this with AI" section

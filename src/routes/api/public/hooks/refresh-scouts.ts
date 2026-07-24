@@ -14,6 +14,7 @@ export const Route = createFileRoute("/api/public/hooks/refresh-scouts")({
         > = [
           ["hackerNews", mod.getLiveOpportunities],
           ["aiEcosystem", mod.getLiveAiEcosystemOpportunities],
+          ["dropshipping", mod.getLiveDropshippingOpportunities],
         ];
 
         const results = await Promise.allSettled(sources.map(([, fn]) => fn()));

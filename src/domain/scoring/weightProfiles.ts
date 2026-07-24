@@ -63,6 +63,15 @@ export const WEIGHT_PROFILES: Record<Category, WeightProfile> = {
     verification_confidence: 0.15,
     automation_potential: 0.1,
   },
+  dropshipping: {
+    search_growth: 0.18,
+    market_saturation: 0.2, // crowding is the single biggest killer of a dropshipping niche
+    competition: 0.12,
+    revenue_potential: 0.18,
+    startup_cost: 0.1,
+    automation_potential: 0.12, // fulfillment is outsourced by design — this is inherently a low-labor model
+    verification_confidence: 0.1,
+  },
 };
 
 /** Human-readable reason templates, keyed by signal type and direction.

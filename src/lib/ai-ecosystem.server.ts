@@ -173,6 +173,43 @@ export async function seedIdeasFromCandidates(
   }
 }
 
+const DROPSHIPPING_KEYWORDS = [
+  "dropship",
+  "drop ship",
+  "drop-ship",
+  "print on demand",
+  "print-on-demand",
+  "pod store",
+  "white label",
+  "private label",
+  "digital download",
+  "digital product store",
+  "reseller",
+  "reselling",
+];
+
+/** Whether an idea is dropshipping-shaped (digital or physical) rather than general "online income" — routes it to the dedicated Drop Shipping category instead. Keyword-based on purpose: no extra AI call needed to classify it. */
+export function isDropshippingIdea(idea: Pick<AiEcosystemIdea, "title" | "notes">): boolean {
+  const text = `${idea.title} ${idea.notes ?? ""}`.toLowerCase();
+  return DROPSHIPPING_KEYWORDS.some((kw) => text.includes(kw));
+}
+
+/**
+ * A few evergreen dropshipping archetypes (digital and physical), used as a
+ * fallback candidate pool for seedIdeasFromCandidates so the Drop Shipping
+ * category actually gets real AI-researched ideas over time — without a
+ * second seeding budget. Callers should alternate between this and real
+ * trending-signal candidates (e.g. by hour) rather than seed from both every
+ * refresh, so total AI spend stays governed solely by
+ * AI_ECOSYSTEM_SEED_PER_REFRESH.
+ */
+export const DROPSHIPPING_SEED_ARCHETYPES = [
+  "a print-on-demand store for a specific hobby niche",
+  "a dropshipping store for a single trending physical product category",
+  "a private-label reseller for a niche home goods category",
+  "a digital download store selling templates for a specific profession",
+];
+
 const DIMENSION_TO_SIGNAL: Record<
   keyof AiEcosystemAnalysis,
   { signalType: string; label: string }
@@ -194,6 +231,7 @@ const DIMENSION_TO_SIGNAL: Record<
 export function normalizeAiEcosystemIdea(
   idea: AiEcosystemIdea,
   production?: YoutubeProduction | null,
+  scoutId: string = "ai_ecosystem",
 ): NormalizedLiveSignal[] {
   const analysis = idea.research?.analysis;
   if (!analysis) return [];
@@ -208,7 +246,7 @@ export function normalizeAiEcosystemIdea(
       const { signalType, label } = DIMENSION_TO_SIGNAL[dimension];
       return {
         opportunity_key: key,
-        scout_id: "ai_ecosystem",
+        scout_id: scoutId,
         signal_type: signalType,
         value: Math.round(Math.min(10, Math.max(0, entry.score)) * 10),
         evidence: entry.reasoning || `AI Ecosystem scored ${label} at ${entry.score}/10`,
@@ -223,7 +261,7 @@ export function normalizeAiEcosystemIdea(
     const { viewCount = 0, likeCount = 0, commentCount = 0 } = production.analytics;
     signals.push({
       opportunity_key: key,
-      scout_id: "ai_ecosystem",
+      scout_id: scoutId,
       signal_type: "verification_confidence",
       value: 95,
       evidence: `Published on YouTube and getting real traction: ${viewCount} views, ${likeCount} likes, ${commentCount} comments — actual outcome data, not a pre-launch estimate.`,

@@ -7,7 +7,11 @@ import { SAMPLE_OPPORTUNITIES, SAMPLE_DATA_STATE } from "@/data/sample/opportuni
 import { CATEGORY_META } from "@/components/opportunity/tokens";
 import { OpportunityCard } from "@/components/opportunity/OpportunityCard";
 import { AppShell } from "@/components/layout/AppShell";
-import { getLiveOpportunities, getLiveAiEcosystemOpportunities } from "@/lib/opportunities.functions";
+import {
+  getLiveOpportunities,
+  getLiveAiEcosystemOpportunities,
+  getLiveDropshippingOpportunities,
+} from "@/lib/opportunities.functions";
 import { listSaved } from "@/lib/saved.functions";
 import { useAuth } from "@/hooks/useAuth";
 import type { Category } from "@/domain/types/opportunity";
@@ -31,6 +35,7 @@ function DiscoverPage() {
   const { user } = useAuth();
   const fetchLive = useServerFn(getLiveOpportunities);
   const fetchLiveAiEcosystem = useServerFn(getLiveAiEcosystemOpportunities);
+  const fetchLiveDropshipping = useServerFn(getLiveDropshippingOpportunities);
   const fetchSaved = useServerFn(listSaved);
 
   const liveQuery = useQuery({
@@ -43,6 +48,13 @@ function DiscoverPage() {
   const aiEcosystemQuery = useQuery({
     queryKey: ["live-opps-ai-ecosystem"],
     queryFn: () => fetchLiveAiEcosystem(),
+    staleTime: 5 * 60_000,
+    refetchInterval: 5 * 60_000,
+  });
+
+  const dropshippingQuery = useQuery({
+    queryKey: ["live-opps-dropshipping"],
+    queryFn: () => fetchLiveDropshipping(),
     staleTime: 5 * 60_000,
     refetchInterval: 5 * 60_000,
   });
@@ -71,9 +83,10 @@ function DiscoverPage() {
   const combined = useMemo(() => {
     const live = (liveQuery.data?.opportunities ?? []).map((o) => ({ opp: o, state: "live" as DataState }));
     const aiEcosystemLive = (aiEcosystemQuery.data?.opportunities ?? []).map((o) => ({ opp: o, state: "live" as DataState }));
+    const dropshippingLive = (dropshippingQuery.data?.opportunities ?? []).map((o) => ({ opp: o, state: "live" as DataState }));
     const sample = showSample ? SAMPLE_OPPORTUNITIES.map((o) => ({ opp: o, state: SAMPLE_DATA_STATE })) : [];
-    return [...live, ...aiEcosystemLive, ...sample];
-  }, [liveQuery.data, aiEcosystemQuery.data, showSample]);
+    return [...live, ...aiEcosystemLive, ...dropshippingLive, ...sample];
+  }, [liveQuery.data, aiEcosystemQuery.data, dropshippingQuery.data, showSample]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -123,8 +136,12 @@ function DiscoverPage() {
           </h1>
           <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
             {(() => {
-              if (liveQuery.isLoading || aiEcosystemQuery.isLoading) return "Fetching live signals…";
-              const liveCount = (liveQuery.data?.opportunities.length ?? 0) + (aiEcosystemQuery.data?.opportunities.length ?? 0);
+              if (liveQuery.isLoading || aiEcosystemQuery.isLoading || dropshippingQuery.isLoading)
+                return "Fetching live signals…";
+              const liveCount =
+                (liveQuery.data?.opportunities.length ?? 0) +
+                (aiEcosystemQuery.data?.opportunities.length ?? 0) +
+                (dropshippingQuery.data?.opportunities.length ?? 0);
               if (liveCount === 0) {
                 return showSample
                   ? "Demo opportunities are shown below because sample mode is enabled."
@@ -133,6 +150,7 @@ function DiscoverPage() {
               const parts = [
                 liveQuery.data?.opportunities.length ? `${liveQuery.data.opportunities.length} from Hacker News` : null,
                 aiEcosystemQuery.data?.opportunities.length ? `${aiEcosystemQuery.data.opportunities.length} from AI Ecosystem` : null,
+                dropshippingQuery.data?.opportunities.length ? `${dropshippingQuery.data.opportunities.length} from Drop Shipping` : null,
               ].filter(Boolean);
               return `${liveCount} live signal${liveCount === 1 ? "" : "s"} (${parts.join(", ")}).`;
             })()}
