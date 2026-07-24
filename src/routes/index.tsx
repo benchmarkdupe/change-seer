@@ -37,12 +37,14 @@ function DiscoverPage() {
     queryKey: ["live-opps"],
     queryFn: () => fetchLive(),
     staleTime: 5 * 60_000,
+    refetchInterval: 5 * 60_000,
   });
 
   const aiEcosystemQuery = useQuery({
     queryKey: ["live-opps-ai-ecosystem"],
     queryFn: () => fetchLiveAiEcosystem(),
     staleTime: 5 * 60_000,
+    refetchInterval: 5 * 60_000,
   });
 
   const savedQuery = useQuery({
