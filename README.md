@@ -72,3 +72,21 @@ relationship, not a merged codebase. To enable it:
    `SUPABASE_SERVICE_ROLE_KEY`).
 
 If unset, this source degrades to an empty list rather than breaking the Discover feed.
+
+**Auto-seeding**: rather than waiting for someone to manually create ideas in ai-ecosystem's
+own dashboard, `getLiveAiEcosystemOpportunities` feeds a few of our own real trending signals
+(currently top Hacker News titles) in as candidate idea titles on every refresh, so this feed
+has fresh AI-researched "upcoming side business" analysis to show. Controlled by
+`AI_ECOSYSTEM_SEED_PER_REFRESH` (default 1) — see the comment in `.env` and
+`src/lib/ai-ecosystem.server.ts`'s `seedIdeasFromCandidates` for the free-tier OpenRouter
+rate-limit math before raising it.
+
+## AI build prompt
+
+Every opportunity's detail page has a "Build this with AI" section
+(`src/components/opportunity/BuildPrompt.tsx`) that generates a ready-to-copy brief — the
+opportunity's evidence, scoring, risks, and a starting sequence — for pasting into an AI
+coding agent (Claude Code, Cursor, ChatGPT, etc.) to actually build and automate the
+business. Pure function of the already-loaded `Opportunity`
+(`src/domain/buildPrompt.ts`), so it works for sample and live opportunities alike with no
+extra fetch.

@@ -51,11 +51,75 @@ async function fetchJSON<T>(path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+async function postJSON<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${AI_ECOSYSTEM_URL}${path}`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      ...(AI_ECOSYSTEM_API_KEY ? { "x-api-key": AI_ECOSYSTEM_API_KEY } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`AI Ecosystem ${path} → ${res.status}`);
+  return res.json() as Promise<T>;
+}
+
 /** Ideas that have completed the research step (status "researched" or "scripted") — earlier ones have no analysis to score yet. */
 export async function fetchResearchedIdeas(limit = 20): Promise<AiEcosystemIdea[]> {
   if (!AI_ECOSYSTEM_URL) return [];
   const ideas = await fetchJSON<AiEcosystemIdea[]>("/ideas");
   return ideas.filter((idea) => idea.research?.analysis).slice(0, limit);
+}
+
+/**
+ * Creates + researches up to `maxNew` fresh ideas from candidate titles
+ * that don't already exist there, so the AI Ecosystem feed has real
+ * AI-researched ideas to show instead of sitting empty until someone
+ * manually creates one via its dashboard. Candidates are typically our own
+ * live signals (e.g. trending Hacker News titles) — ai-ecosystem's
+ * analyst→critic chain will score literally any text as a business idea,
+ * so a low score on a bad candidate is itself useful signal, not a bug.
+ *
+ * Kept deliberately small: each research call is a 2-step AI chain (2
+ * requests), and the free-tier OpenRouter models ai-ecosystem ships with by
+ * default are capped at 50 requests/day, 20/min account-wide — see its
+ * README. At the default hourly refresh interval, maxNew=1 uses ~48 of
+ * that daily budget; raise it only if you're on a paid OpenRouter key, or
+ * set AI_ECOSYSTEM_SEED_PER_REFRESH=0 to disable auto-seeding entirely.
+ *
+ * Best-effort throughout: a candidate that fails to create/research is
+ * skipped, never thrown — this must never break the read path.
+ */
+export async function seedIdeasFromCandidates(
+  candidateTitles: string[],
+  maxNew: number,
+): Promise<void> {
+  if (!AI_ECOSYSTEM_URL || maxNew <= 0 || candidateTitles.length === 0) return;
+
+  let existing: Set<string>;
+  try {
+    const ideas = await fetchJSON<AiEcosystemIdea[]>("/ideas");
+    existing = new Set(ideas.map((i) => i.title.trim().toLowerCase()));
+  } catch {
+    return; // can't safely dedupe against what's already there — skip this run
+  }
+
+  let created = 0;
+  for (const rawTitle of candidateTitles) {
+    if (created >= maxNew) break;
+    const title = rawTitle.trim();
+    const key = title.toLowerCase();
+    if (!title || existing.has(key)) continue;
+
+    try {
+      const idea = await postJSON<{ id: number }>("/ideas", { title });
+      await postJSON(`/ideas/${idea.id}/research`, {});
+      existing.add(key);
+      created++;
+    } catch {
+      // one bad candidate (e.g. a title the analyst model chokes on) shouldn't stop the rest
+    }
+  }
 }
 
 const DIMENSION_TO_SIGNAL: Record<

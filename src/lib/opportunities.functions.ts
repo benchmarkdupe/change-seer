@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import type { Opportunity } from "@/domain/types/opportunity";
 import { runLiveSignalSource } from "@/lib/live-signal-source.server";
 import type { NormalizedLiveSignal } from "@/lib/live-signal-source.server";
@@ -90,8 +91,12 @@ export const getLiveOpportunities = createServerFn({ method: "GET" }).handler(
  */
 export const getLiveAiEcosystemOpportunities = createServerFn({ method: "GET" }).handler(
   async (): Promise<{ opportunities: Opportunity[]; lastRun: string | null }> => {
-    const { fetchResearchedIdeas, normalizeAiEcosystemIdea, difficultyFromScore } =
-      await import("@/lib/ai-ecosystem.server");
+    const {
+      fetchResearchedIdeas,
+      normalizeAiEcosystemIdea,
+      difficultyFromScore,
+      seedIdeasFromCandidates,
+    } = await import("@/lib/ai-ecosystem.server");
 
     return runLiveSignalSource({
       scoutId: "ai_ecosystem",
@@ -99,6 +104,21 @@ export const getLiveAiEcosystemOpportunities = createServerFn({ method: "GET" })
       sourceType: "ai_ecosystem",
       defaultRefreshIntervalMinutes: 60,
       async fetchSignals() {
+        // Feed our own real trending signals in as candidate ideas so this
+        // source has fresh AI research to show instead of sitting empty —
+        // see seedIdeasFromCandidates for the rate-limit reasoning.
+        try {
+          const { fetchTopHNStories } = await import("@/lib/hacker-news.server");
+          const trending = await fetchTopHNStories(10);
+          const maxNew = Number(process.env.AI_ECOSYSTEM_SEED_PER_REFRESH ?? 1);
+          await seedIdeasFromCandidates(
+            trending.map((s) => s.title),
+            maxNew,
+          );
+        } catch {
+          // seeding is a bonus, not a requirement — fall through to reading whatever already exists
+        }
+
         const ideas = await fetchResearchedIdeas(20);
         return ideas.flatMap(normalizeAiEcosystemIdea);
       },
@@ -159,3 +179,18 @@ export const getLiveAiEcosystemOpportunities = createServerFn({ method: "GET" })
     });
   },
 );
+
+/**
+ * Looks up a single live opportunity (id starting "live-") by id across
+ * every live source, for the opportunity detail page — the list endpoints
+ * above only return the top N per source, so a card clicked from the
+ * Discover feed needs its own direct lookup rather than re-slicing a list.
+ */
+export const getLiveOpportunityById = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ id: z.string().min(1).max(200) }).parse(d))
+  .handler(async ({ data }): Promise<{ opportunity: Opportunity | null }> => {
+    const [hn, ai] = await Promise.all([getLiveOpportunities(), getLiveAiEcosystemOpportunities()]);
+    const opportunity =
+      [...hn.opportunities, ...ai.opportunities].find((o) => o.id === data.id) ?? null;
+    return { opportunity };
+  });

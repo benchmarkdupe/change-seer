@@ -8,14 +8,25 @@ import { Sparkline } from "@/components/opportunity/Sparkline";
 import { MetricExplainer } from "@/components/opportunity/MetricExplainer";
 import { Disclosure } from "@/components/opportunity/Disclosure";
 import { ScoreTrace } from "@/components/opportunity/ScoreTrace";
+import { BuildPrompt } from "@/components/opportunity/BuildPrompt";
 import { AppShell } from "@/components/layout/AppShell";
 import type { Opportunity } from "@/domain/types/opportunity";
+import type { DataState } from "@/domain/dataState";
 
 export const Route = createFileRoute("/opportunity/$id")({
-  loader: ({ params }): { opp: Opportunity } => {
+  loader: async ({ params }): Promise<{ opp: Opportunity; dataState: DataState }> => {
+    // Live opportunity ids are always "live-<key>" (see live-signal-source.server.ts);
+    // sample ids are bare slugs — branch on that instead of trying sample first,
+    // since a live-only id would never match a sample seed anyway.
+    if (params.id.startsWith("live-")) {
+      const { getLiveOpportunityById } = await import("@/lib/opportunities.functions");
+      const { opportunity } = await getLiveOpportunityById({ data: { id: params.id } });
+      if (!opportunity) throw notFound();
+      return { opp: opportunity, dataState: "live" };
+    }
     const opp = getSampleOpportunityById(params.id);
     if (!opp) throw notFound();
-    return { opp };
+    return { opp, dataState: SAMPLE_DATA_STATE };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
@@ -59,7 +70,7 @@ function MomentumBadge({ momentum }: { momentum: number }) {
 }
 
 function OpportunityDetail() {
-  const { opp } = Route.useLoaderData() as { opp: Opportunity };
+  const { opp, dataState } = Route.useLoaderData() as { opp: Opportunity; dataState: DataState };
   const tier = tierClass(opp.score.rating);
   const cat = CATEGORY_META[opp.category];
   const Icon = cat.icon;
@@ -98,7 +109,7 @@ function OpportunityDetail() {
             {opp.title}
           </h1>
           <div className="mt-3 flex flex-wrap gap-2">
-            <DataStateBadge state={SAMPLE_DATA_STATE} />
+            <DataStateBadge state={dataState} />
             <VerificationBadge status={opp.verification} />
           </div>
           <p className="mt-4 text-[14px] leading-relaxed text-foreground/85">{opp.summary}</p>
@@ -223,10 +234,14 @@ function OpportunityDetail() {
           <ScoreTrace score={opp.score} />
         </Disclosure>
 
-        <div className="rounded-2xl border border-dashed border-border p-4 text-[12px] leading-relaxed text-muted-foreground">
-          <strong className="font-semibold text-foreground">Heads up: </strong>
-          This opportunity is built on sample data for illustration. Real scout integrations will replace it — the scoring, evidence, and audit trail architecture above are the real thing.
-        </div>
+        <BuildPrompt opp={opp} isSample={dataState === SAMPLE_DATA_STATE} />
+
+        {dataState === SAMPLE_DATA_STATE && (
+          <div className="rounded-2xl border border-dashed border-border p-4 text-[12px] leading-relaxed text-muted-foreground">
+            <strong className="font-semibold text-foreground">Heads up: </strong>
+            This opportunity is built on sample data for illustration. Real scout integrations will replace it — the scoring, evidence, and audit trail architecture above are the real thing.
+          </div>
+        )}
       </article>
     </AppShell>
   );
