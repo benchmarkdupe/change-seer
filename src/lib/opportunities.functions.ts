@@ -93,6 +93,7 @@ export const getLiveAiEcosystemOpportunities = createServerFn({ method: "GET" })
   async (): Promise<{ opportunities: Opportunity[]; lastRun: string | null }> => {
     const {
       fetchResearchedIdeas,
+      fetchPublishedProductionsByIdeaId,
       normalizeAiEcosystemIdea,
       difficultyFromScore,
       seedIdeasFromCandidates,
@@ -119,17 +120,28 @@ export const getLiveAiEcosystemOpportunities = createServerFn({ method: "GET" })
           // seeding is a bonus, not a requirement — fall through to reading whatever already exists
         }
 
-        const ideas = await fetchResearchedIdeas(20);
-        return ideas.flatMap(normalizeAiEcosystemIdea);
+        const [ideas, productionsByIdeaId] = await Promise.all([
+          fetchResearchedIdeas(20),
+          fetchPublishedProductionsByIdeaId(),
+        ]);
+        return ideas.flatMap((idea) =>
+          normalizeAiEcosystemIdea(idea, productionsByIdeaId.get(idea.id)),
+        );
       },
       buildOpportunity({ opportunityKey, rows, score }) {
         const payload = rows[0].raw_payload as {
           title?: string;
           profitabilityScore?: number | null;
           research?: { analysis?: Record<string, { score: number; reasoning: string }> };
+          production?: {
+            youtubeUrl?: string | null;
+            analytics?: { viewCount?: number; likeCount?: number; commentCount?: number } | null;
+          } | null;
         } | null;
         const title = payload?.title ?? opportunityKey;
         const analysis = payload?.research?.analysis;
+        const production = payload?.production;
+        const published = !!production?.analytics;
         const sparkline = Array.from({ length: 10 }, (_, i) =>
           Math.max(5, Math.round(score.signalScore - (9 - i) * (score.momentum / 30))),
         );
@@ -139,7 +151,7 @@ export const getLiveAiEcosystemOpportunities = createServerFn({ method: "GET" })
           category: "income",
           region: "Global",
           detectedAt: rows[0].detected_at,
-          verification: "pending",
+          verification: published ? "verified" : "pending",
           trend: score.momentum >= 60 ? "up" : score.momentum <= 40 ? "down" : "flat",
           sparkline,
           estimatedStartupCost: { min: 0, max: 0 },
@@ -148,25 +160,35 @@ export const getLiveAiEcosystemOpportunities = createServerFn({ method: "GET" })
             ? difficultyFromScore(analysis.startupDifficulty.score)
             : "moderate",
           estimatedMonthlyPotential: { min: 0, max: 0 },
-          summary: `Researched by our AI Ecosystem backend as an automatable content-business idea (profitability score ${payload?.profitabilityScore ?? "n/a"}/10 from a 2-step analyst→critic AI chain). A generated hypothesis, not a human-verified plan — read the reasoning before acting.`,
+          summary: published
+            ? `Researched, produced, and published by our AI Ecosystem backend — already live on YouTube with ${production?.analytics?.viewCount ?? 0} views. Real audience data, not just a pre-launch estimate.`
+            : `Researched by our AI Ecosystem backend as an automatable content-business idea (profitability score ${payload?.profitabilityScore ?? "n/a"}/10 from a 2-step analyst→critic AI chain). A generated hypothesis, not a human-verified plan — read the reasoning before acting.`,
           score,
           aiDetail: {
             whyGrowing: analysis?.demand?.reasoning ?? "No demand analysis available yet.",
-            whoIsSucceeding:
-              "Too early to say — this is an AI-generated idea, not a validated business.",
+            whoIsSucceeding: published
+              ? `This exact idea already has a published video — see the real view/like/comment counts in the evidence below.`
+              : "Too early to say — this is an AI-generated idea, not a validated business.",
             risks: [
               analysis?.competition?.reasoning ?? "Competition not yet analyzed.",
-              "AI-generated analysis — treat as a starting hypothesis, not verified fact",
+              published
+                ? "One video's performance isn't a guarantee the format repeats — treat as an early read, not a trend"
+                : "AI-generated analysis — treat as a starting hypothesis, not verified fact",
               "Not yet cross-corroborated by a second independent source",
             ],
             recommendedCapital:
               "N/A — automated content business, no capital estimate provided by the source",
             difficultyExplanation:
               analysis?.startupDifficulty?.reasoning ?? "Difficulty not yet analyzed.",
-            howToBegin: [
-              "Review the full research and script (if generated) in the AI Ecosystem dashboard",
-              "Validate demand independently before committing production time",
-            ],
+            howToBegin: published
+              ? [
+                  `Watch the published video (${production?.youtubeUrl ?? "see evidence below"}) to see what actually landed`,
+                  "Look for a second, related idea to test whether the audience response repeats",
+                ]
+              : [
+                  "Review the full research and script (if generated) in the AI Ecosystem dashboard",
+                  "Validate demand independently before committing production time",
+                ],
             timeToProfitability: "N/A — depends on content production and publishing cadence",
             publicEvidence: rows.map((r) => ({
               label: r.evidence,

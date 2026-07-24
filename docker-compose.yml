@@ -7,7 +7,9 @@ services:
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
       - AI_ECOSYSTEM_OPPORTUNITY_ENGINE_URL=${AI_ECOSYSTEM_OPPORTUNITY_ENGINE_URL:-http://opportunity-engine:3001}
+      - AI_ECOSYSTEM_YOUTUBE_WORKER_URL=${AI_ECOSYSTEM_YOUTUBE_WORKER_URL:-http://youtube-worker:3002}
       - AI_ECOSYSTEM_API_KEY=${AI_ECOSYSTEM_API_KEY:-}
+      - AI_ECOSYSTEM_SEED_PER_REFRESH=${AI_ECOSYSTEM_SEED_PER_REFRESH:-1}
     restart: unless-stopped
     # Joins ai-ecosystem's compose network so AI_ECOSYSTEM_OPPORTUNITY_ENGINE_URL
     # can use the internal service hostname above instead of a public URL/API

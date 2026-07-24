@@ -30,25 +30,40 @@ npm run dev
 
 ## Deployment (Docker / self-hosted, e.g. Hetzner)
 
+Assuming `ai-ecosystem` is already running on the VPS via its own `docker compose` (in a
+directory called `ai-ecosystem`, the default project name Compose derives from it):
+
 ```sh
-cp .env .env  # already committed with the public Supabase URL/key — add
-              # SUPABASE_SERVICE_ROLE_KEY and, if you're wiring up AI Ecosystem,
-              # AI_ECOSYSTEM_API_KEY to this same file (docker compose reads it
-              # both as the app's runtime env and for ${VAR} substitution below)
+# on the VPS, next to (not inside) the ai-ecosystem checkout
+git clone <this-repository-url> change-seer
+cd change-seer
+
+# .env already has the public Supabase URL/key committed. Add the two secrets
+# it doesn't (never commit these):
+echo 'SUPABASE_SERVICE_ROLE_KEY=...' >> .env        # from Supabase dashboard > Settings > API
+echo 'AI_ECOSYSTEM_API_KEY=...' >> .env              # only if ai-ecosystem's .env sets API_KEY
+
 docker compose up -d --build
 ```
 
-- Serves on port 3000 by default (`PORT` env var to change it).
+That's it — `docker-compose.yml` already points `AI_ECOSYSTEM_OPPORTUNITY_ENGINE_URL` and
+`AI_ECOSYSTEM_YOUTUBE_WORKER_URL` at ai-ecosystem's internal service hostnames and joins its
+Docker network, so no public URL or extra exposed ports are needed for that traffic. Verify
+with `docker compose logs -f change-seer` and `curl http://localhost:3000`.
+
+- Serves on port 3000 by default (`PORT` env var to change it, or put a reverse proxy /
+  domain in front of it — nothing in this repo assumes one).
+- If ai-ecosystem's compose project isn't named `ai-ecosystem` (check with
+  `docker network ls`), set `AI_ECOSYSTEM_NETWORK=<that>_default` in `.env` first.
+- Running standalone, without ai-ecosystem on the same host? Delete the `networks:` block
+  and the two `AI_ECOSYSTEM_*` lines in `docker-compose.yml`, and set
+  `AI_ECOSYSTEM_OPPORTUNITY_ENGINE_URL`/`AI_ECOSYSTEM_YOUTUBE_WORKER_URL` to its public
+  URL(s) instead.
 - `Dockerfile` is a two-stage build: `npm run build` (TanStack Start/Nitro →
   `dist/client` + `dist/server`), then a slim runtime image running
   `npm run start`, which is `srvx serve` pointed at the built server entry
   with the client build served as static assets.
-- If `ai-ecosystem` is also running via its own `docker compose` on the same
-  host, `docker-compose.yml` here joins its network so
-  `AI_ECOSYSTEM_OPPORTUNITY_ENGINE_URL` can be the internal hostname
-  (`http://opportunity-engine:3001`, the default) instead of a public URL —
-  see the comments in `docker-compose.yml` if its compose project isn't named
-  `ai-ecosystem`, or if you're running this standalone without it.
+- To pull in future changes: `git pull && docker compose up -d --build`.
 
 ## AI Ecosystem integration
 
@@ -80,6 +95,16 @@ has fresh AI-researched "upcoming side business" analysis to show. Controlled by
 `AI_ECOSYSTEM_SEED_PER_REFRESH` (default 1) — see the comment in `.env` and
 `src/lib/ai-ecosystem.server.ts`'s `seedIdeasFromCandidates` for the free-tier OpenRouter
 rate-limit math before raising it.
+
+**YouTube performance as verification** (`AI_ECOSYSTEM_YOUTUBE_WORKER_URL`, optional): once
+an idea has been scripted, produced, and published by ai-ecosystem's `youtube-worker`
+service, `fetchPublishedProductionsByIdeaId` in `ai-ecosystem.server.ts` pulls that
+production's real view/like/comment counts and folds them in as a high-confidence
+`verification_confidence` signal — the opportunity flips from `pending` to `verified` and its
+summary/evidence cite the actual numbers instead of only the pre-launch AI estimate. This is
+the strongest evidence tier the app has anywhere: measured audience outcome, not a guess.
+Reads youtube-worker's already-cached analytics rather than forcing a fresh YouTube Data API
+call every refresh, to stay well inside its quota.
 
 ## AI build prompt
 

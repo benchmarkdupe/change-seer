@@ -16,6 +16,7 @@ import type { Difficulty } from "@/domain/types/opportunity";
  */
 const AI_ECOSYSTEM_URL = process.env.AI_ECOSYSTEM_OPPORTUNITY_ENGINE_URL;
 const AI_ECOSYSTEM_API_KEY = process.env.AI_ECOSYSTEM_API_KEY;
+const YOUTUBE_WORKER_URL = process.env.AI_ECOSYSTEM_YOUTUBE_WORKER_URL;
 
 export interface AiEcosystemDimension {
   score: number; // 0-10
@@ -51,6 +52,14 @@ async function fetchJSON<T>(path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+async function fetchYoutubeWorkerJSON<T>(path: string): Promise<T> {
+  const res = await fetch(`${YOUTUBE_WORKER_URL}${path}`, {
+    headers: AI_ECOSYSTEM_API_KEY ? { "x-api-key": AI_ECOSYSTEM_API_KEY } : undefined,
+  });
+  if (!res.ok) throw new Error(`YouTube Worker ${path} → ${res.status}`);
+  return res.json() as Promise<T>;
+}
+
 async function postJSON<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${AI_ECOSYSTEM_URL}${path}`, {
     method: "POST",
@@ -69,6 +78,48 @@ export async function fetchResearchedIdeas(limit = 20): Promise<AiEcosystemIdea[
   if (!AI_ECOSYSTEM_URL) return [];
   const ideas = await fetchJSON<AiEcosystemIdea[]>("/ideas");
   return ideas.filter((idea) => idea.research?.analysis).slice(0, limit);
+}
+
+export interface YoutubeProductionAnalytics {
+  viewCount?: number;
+  likeCount?: number;
+  commentCount?: number;
+}
+
+export interface YoutubeProduction {
+  id: number;
+  ideaId: number;
+  status: string;
+  youtubeVideoId: string | null;
+  youtubeUrl: string | null;
+  publishedAt: string | null;
+  analytics: YoutubeProductionAnalytics | null;
+}
+
+/**
+ * Published productions from the youtube-worker service, keyed by the idea
+ * they were scripted from. This is the strongest evidence tier this app
+ * has anywhere: real audience outcome data (actual view/like/comment
+ * counts on a live video), not a pre-launch AI estimate. Reads whatever
+ * youtube-worker already has cached rather than forcing a fresh YouTube
+ * Data API call on every refresh, to stay well inside its quota — see
+ * `GET /productions/:id/analytics` in youtube-worker's README if you want
+ * to force a refresh from there instead.
+ */
+export async function fetchPublishedProductionsByIdeaId(): Promise<Map<number, YoutubeProduction>> {
+  const byIdea = new Map<number, YoutubeProduction>();
+  if (!YOUTUBE_WORKER_URL) return byIdea;
+  try {
+    const productions = await fetchYoutubeWorkerJSON<YoutubeProduction[]>(
+      "/productions?status=published",
+    );
+    for (const p of productions) {
+      if (p.ideaId != null) byIdea.set(p.ideaId, p);
+    }
+  } catch {
+    // youtube-worker being unreachable shouldn't take down the AI Ecosystem source
+  }
+  return byIdea;
 }
 
 /**
@@ -133,13 +184,24 @@ const DIMENSION_TO_SIGNAL: Record<
   automationPotential: { signalType: "automation_potential", label: "automation potential" },
 };
 
-/** Turn one researched idea's 5-dimension analysis into signals. AI-generated (analyst→critic reviewed), so scouted at moderate (not maximal) source confidence. */
-export function normalizeAiEcosystemIdea(idea: AiEcosystemIdea): NormalizedLiveSignal[] {
+/**
+ * Turn one researched idea's 5-dimension analysis into signals. AI-generated
+ * (analyst→critic reviewed), so scouted at moderate (not maximal) source
+ * confidence — unless a published YouTube production backs it with real
+ * audience data, in which case that outcome data drives a much stronger
+ * verification_confidence signal, since it's no longer just a model's guess.
+ */
+export function normalizeAiEcosystemIdea(
+  idea: AiEcosystemIdea,
+  production?: YoutubeProduction | null,
+): NormalizedLiveSignal[] {
   const analysis = idea.research?.analysis;
   if (!analysis) return [];
 
   const key = `ai-ecosystem-${idea.id}`;
-  return (Object.keys(DIMENSION_TO_SIGNAL) as Array<keyof AiEcosystemAnalysis>)
+  const payload = { ...idea, production: production ?? null } as unknown as Record<string, unknown>;
+
+  const signals = (Object.keys(DIMENSION_TO_SIGNAL) as Array<keyof AiEcosystemAnalysis>)
     .map((dimension): NormalizedLiveSignal | null => {
       const entry = analysis[dimension];
       if (!entry) return null;
@@ -152,10 +214,26 @@ export function normalizeAiEcosystemIdea(idea: AiEcosystemIdea): NormalizedLiveS
         evidence: entry.reasoning || `AI Ecosystem scored ${label} at ${entry.score}/10`,
         source_url: null,
         source_confidence: 75,
-        raw_payload: idea as unknown as Record<string, unknown>,
+        raw_payload: payload,
       };
     })
     .filter((s): s is NormalizedLiveSignal => s !== null);
+
+  if (production?.analytics) {
+    const { viewCount = 0, likeCount = 0, commentCount = 0 } = production.analytics;
+    signals.push({
+      opportunity_key: key,
+      scout_id: "ai_ecosystem",
+      signal_type: "verification_confidence",
+      value: 95,
+      evidence: `Published on YouTube and getting real traction: ${viewCount} views, ${likeCount} likes, ${commentCount} comments — actual outcome data, not a pre-launch estimate.`,
+      source_url: production.youtubeUrl,
+      source_confidence: 95,
+      raw_payload: payload,
+    });
+  }
+
+  return signals;
 }
 
 export function difficultyFromScore(score0to10: number): Difficulty {
