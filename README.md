@@ -28,6 +28,28 @@ npm run dev
 - React
 - Tailwind CSS
 
+## Deployment (Docker / self-hosted, e.g. Hetzner)
+
+```sh
+cp .env .env  # already committed with the public Supabase URL/key — add
+              # SUPABASE_SERVICE_ROLE_KEY and, if you're wiring up AI Ecosystem,
+              # AI_ECOSYSTEM_API_KEY to this same file (docker compose reads it
+              # both as the app's runtime env and for ${VAR} substitution below)
+docker compose up -d --build
+```
+
+- Serves on port 3000 by default (`PORT` env var to change it).
+- `Dockerfile` is a two-stage build: `npm run build` (TanStack Start/Nitro →
+  `dist/client` + `dist/server`), then a slim runtime image running
+  `npm run start`, which is `srvx serve` pointed at the built server entry
+  with the client build served as static assets.
+- If `ai-ecosystem` is also running via its own `docker compose` on the same
+  host, `docker-compose.yml` here joins its network so
+  `AI_ECOSYSTEM_OPPORTUNITY_ENGINE_URL` can be the internal hostname
+  (`http://opportunity-engine:3001`, the default) instead of a public URL —
+  see the comments in `docker-compose.yml` if its compose project isn't named
+  `ai-ecosystem`, or if you're running this standalone without it.
+
 ## AI Ecosystem integration
 
 OpportunityOS consumes [`ai-ecosystem`](https://github.com/benchmarkdupe/ai-ecosystem) — our

@@ -41,23 +41,18 @@ function AuthPage() {
   }, []);
 
   useEffect(() => {
+    // supabase-js v2's client already parses the magic-link tokens out of
+    // the URL on init (detectSessionInUrl, on by default — see
+    // src/integrations/supabase/client.ts) and fires SIGNED_IN below once
+    // that resolves. No manual "exchange the URL for a session" call is
+    // needed (or exists) in v2 — the old v1-only supabase.auth.getSessionFromUrl()
+    // that used to be here doesn't exist on this client and was throwing on
+    // every single magic-link redirect, which is why sign-in silently failed.
     let active = true;
 
-    const handleSession = async () => {
-      const { error: urlError } = await supabase.auth.getSessionFromUrl({ storeSession: true });
-      if (!active) return;
-      if (urlError) {
-        console.warn("auth redirect handling failed", urlError);
-      }
-
-      const { data } = await supabase.auth.getSession();
-      if (!active) return;
-      if (data.session) {
-        navigate({ to: "/" });
-      }
-    };
-
-    void handleSession();
+    supabase.auth.getSession().then(({ data }) => {
+      if (active && data.session) navigate({ to: "/" });
+    });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {

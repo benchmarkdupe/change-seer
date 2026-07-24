@@ -1,0 +1,26 @@
+services:
+  change-seer:
+    build: .
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - AI_ECOSYSTEM_OPPORTUNITY_ENGINE_URL=${AI_ECOSYSTEM_OPPORTUNITY_ENGINE_URL:-http://opportunity-engine:3001}
+      - AI_ECOSYSTEM_API_KEY=${AI_ECOSYSTEM_API_KEY:-}
+    restart: unless-stopped
+    # Joins ai-ecosystem's compose network so AI_ECOSYSTEM_OPPORTUNITY_ENGINE_URL
+    # can use the internal service hostname above instead of a public URL/API
+    # key. Only works if ai-ecosystem is already running on this host — set
+    # AI_ECOSYSTEM_NETWORK if its compose project isn't named "ai-ecosystem"
+    # (Compose names the default network "<project-dir-name>_default").
+    # Remove this network + the two AI_ECOSYSTEM_* lines above if running
+    # change-seer standalone.
+    networks:
+      - default
+      - ai-ecosystem
+
+networks:
+  ai-ecosystem:
+    external: true
+    name: ${AI_ECOSYSTEM_NETWORK:-ai-ecosystem_default}
