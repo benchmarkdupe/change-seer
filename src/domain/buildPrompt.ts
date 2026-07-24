@@ -1,4 +1,5 @@
 import type { Category, Opportunity } from "./types/opportunity";
+import { summarizeTikTokPlaybookForPrompt } from "./knowledge/tiktokShortFormPlaybook";
 
 const CATEGORY_LABEL: Record<Category, string> = {
   business: "Business",
@@ -41,6 +42,14 @@ export function generateBuildPrompt(opp: Opportunity, isSample: boolean): string
   const risks = opp.aiDetail.risks.map((r) => `- ${r}`).join("\n");
   const steps = opp.aiDetail.howToBegin.map((s, i) => `${i + 1}. ${s}`).join("\n");
 
+  // Online-income and AI-Ecosystem-sourced opportunities are specifically
+  // short-form-content-shaped businesses — fold in our own proven video
+  // patterns so the agent isn't reinventing hook/structure/CTA from scratch.
+  const isContentShaped = opp.category === "income" || opp.sourceScoutIds.includes("ai_ecosystem");
+  const contentPlaybook = isContentShaped
+    ? `\n\n## Content playbook to apply\n${summarizeTikTokPlaybookForPrompt()}`
+    : "";
+
   return `You are helping me build and, as much as possible, automate a real business based on the opportunity below. Be concrete: propose an actual MVP scope, then build it — code, content, or automation scripts as appropriate — rather than only describing a plan.
 
 ## The opportunity
@@ -66,7 +75,7 @@ ${risks}
 ${evidence}
 
 ## A reasonable starting sequence
-${steps}
+${steps}${contentPlaybook}
 
 ## What I want from you
 1. Propose the smallest automatable MVP that tests this opportunity's core demand assumption within a week.
