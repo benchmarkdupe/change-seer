@@ -10,16 +10,17 @@
  */
 
 export type SignalType =
-  | "search_growth"          // rising/falling search interest
-  | "market_growth"          // TAM / category growth
-  | "competition"            // how saturated the space is (higher = worse)
-  | "revenue_potential"      // estimated upside
-  | "startup_cost"           // capital required (higher = worse)
-  | "difficulty"             // execution difficulty (higher = worse)
-  | "momentum"                // rate of change over recent window
-  | "community_interest"     // discussion/engagement volume
-  | "market_saturation"      // supply-side crowding (higher = worse)
-  | "verification_confidence"; // how corroborated/legitimate the source is
+  | "search_growth" // rising/falling search interest
+  | "market_growth" // TAM / category growth
+  | "competition" // how saturated the space is (higher = worse)
+  | "revenue_potential" // estimated upside
+  | "startup_cost" // capital required (higher = worse)
+  | "difficulty" // execution difficulty (higher = worse)
+  | "momentum" // rate of change over recent window
+  | "community_interest" // discussion/engagement volume
+  | "market_saturation" // supply-side crowding (higher = worse)
+  | "verification_confidence" // how corroborated/legitimate the source is
+  | "automation_potential"; // how much of the business could run with minimal human input
 
 /** Signals where a HIGHER raw value is WORSE for the opportunity.
  * The scoring engine inverts these before weighting. Centralizing this

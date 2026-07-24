@@ -7,7 +7,7 @@ import { SAMPLE_OPPORTUNITIES, SAMPLE_DATA_STATE } from "@/data/sample/opportuni
 import { CATEGORY_META } from "@/components/opportunity/tokens";
 import { OpportunityCard } from "@/components/opportunity/OpportunityCard";
 import { AppShell } from "@/components/layout/AppShell";
-import { getLiveOpportunities } from "@/lib/opportunities.functions";
+import { getLiveOpportunities, getLiveAiEcosystemOpportunities } from "@/lib/opportunities.functions";
 import { listSaved } from "@/lib/saved.functions";
 import { useAuth } from "@/hooks/useAuth";
 import type { Category } from "@/domain/types/opportunity";
@@ -30,11 +30,18 @@ export const Route = createFileRoute("/")({
 function DiscoverPage() {
   const { user } = useAuth();
   const fetchLive = useServerFn(getLiveOpportunities);
+  const fetchLiveAiEcosystem = useServerFn(getLiveAiEcosystemOpportunities);
   const fetchSaved = useServerFn(listSaved);
 
   const liveQuery = useQuery({
     queryKey: ["live-opps"],
     queryFn: () => fetchLive(),
+    staleTime: 5 * 60_000,
+  });
+
+  const aiEcosystemQuery = useQuery({
+    queryKey: ["live-opps-ai-ecosystem"],
+    queryFn: () => fetchLiveAiEcosystem(),
     staleTime: 5 * 60_000,
   });
 
@@ -61,9 +68,10 @@ function DiscoverPage() {
 
   const combined = useMemo(() => {
     const live = (liveQuery.data?.opportunities ?? []).map((o) => ({ opp: o, state: "live" as DataState }));
+    const aiEcosystemLive = (aiEcosystemQuery.data?.opportunities ?? []).map((o) => ({ opp: o, state: "live" as DataState }));
     const sample = showSample ? SAMPLE_OPPORTUNITIES.map((o) => ({ opp: o, state: SAMPLE_DATA_STATE })) : [];
-    return [...live, ...sample];
-  }, [liveQuery.data, showSample]);
+    return [...live, ...aiEcosystemLive, ...sample];
+  }, [liveQuery.data, aiEcosystemQuery.data, showSample]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -112,9 +120,20 @@ function DiscoverPage() {
             What's changing<span className="text-muted-foreground"> right now.</span>
           </h1>
           <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
-            {liveQuery.isLoading ? "Fetching live signals…" :
-             liveQuery.data?.opportunities.length ? `${liveQuery.data.opportunities.length} live signals from Hacker News.` :
-             (showSample ? "Demo opportunities are shown below because sample mode is enabled." : "No live signals are available right now. Enable demo mode to view sample opportunities." )}
+            {(() => {
+              if (liveQuery.isLoading || aiEcosystemQuery.isLoading) return "Fetching live signals…";
+              const liveCount = (liveQuery.data?.opportunities.length ?? 0) + (aiEcosystemQuery.data?.opportunities.length ?? 0);
+              if (liveCount === 0) {
+                return showSample
+                  ? "Demo opportunities are shown below because sample mode is enabled."
+                  : "No live signals are available right now. Enable demo mode to view sample opportunities.";
+              }
+              const parts = [
+                liveQuery.data?.opportunities.length ? `${liveQuery.data.opportunities.length} from Hacker News` : null,
+                aiEcosystemQuery.data?.opportunities.length ? `${aiEcosystemQuery.data.opportunities.length} from AI Ecosystem` : null,
+              ].filter(Boolean);
+              return `${liveCount} live signal${liveCount === 1 ? "" : "s"} (${parts.join(", ")}).`;
+            })()}
           </p>
 
           <div className="mt-4 flex items-center gap-2">

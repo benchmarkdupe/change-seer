@@ -55,12 +55,13 @@ export const WEIGHT_PROFILES: Record<Category, WeightProfile> = {
     verification_confidence: 0.15,
   },
   income: {
-    search_growth: 0.18,
-    startup_cost: 0.12,
+    search_growth: 0.15,
+    startup_cost: 0.1,
     difficulty: 0.15,
     revenue_potential: 0.2,
     market_saturation: 0.15,
-    verification_confidence: 0.2,
+    verification_confidence: 0.15,
+    automation_potential: 0.1,
   },
 };
 
@@ -76,7 +77,20 @@ export const REASON_TEMPLATES: Record<SignalType, { up: string; down: string }> 
   startup_cost: { up: "High capital requirement", down: "Low barrier to entry" },
   difficulty: { up: "High execution difficulty", down: "Approachable execution difficulty" },
   momentum: { up: "Accelerating momentum", down: "Momentum stalling" },
-  community_interest: { up: "Discussion volume increasing", down: "Discussion volume flat or falling" },
-  market_saturation: { up: "Supply-side crowding out", down: "Supplier/space availability increasing" },
-  verification_confidence: { up: "Strongly corroborated across sources", down: "Limited corroboration" },
+  community_interest: {
+    up: "Discussion volume increasing",
+    down: "Discussion volume flat or falling",
+  },
+  market_saturation: {
+    up: "Supply-side crowding out",
+    down: "Supplier/space availability increasing",
+  },
+  verification_confidence: {
+    up: "Strongly corroborated across sources",
+    down: "Limited corroboration",
+  },
+  automation_potential: {
+    up: "Highly automatable with AI workers",
+    down: "Requires significant manual involvement",
+  },
 };
